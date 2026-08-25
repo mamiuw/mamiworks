@@ -741,38 +741,40 @@ $("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
 $("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
 
 /* Tamamen Veritabanından Şifre Çekme (Kodda Şifre Metni Bulunmaz) */
-$("adminLoginBtn").onclick = async () => {
-  const enteredPass = $("adminPassInput").value.trim();
-  if (!enteredPass) {
-    toast("Hata", "Lütfen şifre giriniz.");
-    return;
-  }
-
-  try {
-    const dbRef = window.dbRef(window.firebaseDb);
-    const snapshot = await window.dbGet(window.dbChild(dbRef, 'admin_settings/password'));
-
-    const correctPass = String(snapshot.val() || "").trim();
-    const cleanEntered = String(enteredPass).trim();
-
-    if (cleanEntered === correctPass && cleanEntered !== "") {
-        $("#adminLoginModal").style.display = "none";
-        $("#adminControlsBox").style.display = "block";
-        document.body.classList.add("admin-mode");
-        renderProducts();
-        renderCustomerFolders();
-        toast("Giriş Başarılı", "Admin yönetim paneline bağlandınız.");
-    } else {
-        toast("Hata", "Girdiğiniz şifre geçersiz.");
+/* Tamamen Veritabanından Şifre Çekme */
+$("#adminLoginBtn").onclick = async () => {
+    const enteredPass = $("#adminPassInput").value.trim();
+    if (!enteredPass) {
+        toast("Hata", "Lütfen şifre giriniz.");
+        return;
     }
-} catch (err) {
-    console.error("Şifre doğrulama hatası:", err);
-    toast("Bağlantı Hatası", "Şifre doğrulanırken bir hata oluştu.");
-}
-}
-    if (String(enteredPass).trim() === String(correctPass).trim()) {
-      $("adminLoginBox").style.display = "none";
-      $("adminControlsBox").style.display = "block";
+
+    try {
+        const dbRef = window.dbRef(window.firebaseDb);
+        const snapshot = await window.dbGet(window.dbChild(dbRef, 'admin_settings/password'));
+
+        if (!snapshot.exists()) {
+            toast("Sistem Hatası", "Veritabanında şifre bulunamadı.");
+            return;
+        }
+
+        const correctPass = String(snapshot.val() || "").trim();
+
+        if (enteredPass === correctPass) {
+            $("#adminLoginModal").style.display = "none";
+            $("#adminControlsBox").style.display = "block";
+            document.body.classList.add("admin-mode");
+            renderProducts();
+            renderCustomerFolders();
+            toast("Giriş Başarılı", "Admin yönetim paneline bağlandınız.");
+        } else {
+            toast("Hata", "Girdiğiniz şifre geçersiz.");
+        }
+    } catch (err) {
+        console.error("Şifre doğrulama hatası:", err);
+        toast("Bağlantı Hatası", "Şifre doğrulanırken bir hata oluştu.");
+    }
+};
       document.body.classList.add("admin-mode");
       renderProducts(); 
       renderCustomerFolders();
