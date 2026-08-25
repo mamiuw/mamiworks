@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAMI WORKS — Premium Automotive Graphic & Logo Store</title>
+<style>
+:root {
+  --bg-gradient: radial-gradient(circle at 50% 0%, #151a24 0%, #080a0e 100%);
+  --panel-bg: rgba(18, 22, 31, 0.75);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --gold-primary: #d7b46a;
+  --gold-light: #f3d89d;
+  --gold-glow: rgba(215, 180, 106, 0.25);
+  --input-bg: rgba(0, 0, 0, 0.3);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --danger: #ef4444;
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.light-theme {
+  --bg-gradient: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --gold-primary: #b48835;
+  --gold-light: #d7b46a;
+  --gold-glow: rgba(180, 136, 53, 0.2);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: rgba(0, 0, 0, 0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh; color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-gradient); background-attachment: fixed; line-height: 1.5; padding: 24px 16px; position: relative;
+}
+
+#particleCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+
+.app { max-width: 1200px; margin: 0 auto; position: relative; z-index: 10; }
+
+.nav {
+  display: flex; justify-content: space-between; align-items: center; padding: 12px 20px;
+  background: var(--panel-bg); border: 1px solid var(--panel-border); backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg); margin-bottom: 24px;
+}
+
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo {
+  width: 44px; height: 44px; border-radius: var(--radius-md); background: linear-gradient(135deg, #2a2215, #141009);
+  border: 1px solid var(--gold-primary); display: flex; align-items: center; justify-content: center;
+  color: var(--gold-light); font-weight: 800; font-size: 20px; box-shadow: 0 0 15px var(--gold-glow); cursor: pointer;
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); padding: 8px 14px;
+  border-radius: 99px; font-size: 12px; font-weight: 600;
+}
+
+.hero {
+  border: 1px solid var(--panel-border); border-radius: var(--radius-lg); padding: 36px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(12px); margin-bottom: 24px;
+}
+.eyebrow { color: var(--gold-primary); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+
+.shop-container { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+.card { background: var(--panel-bg); border: 1px solid var(--panel-border); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-lg); }
+.card-head { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--panel-border); }
+
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.product-card {
+  background: var(--input-bg); border: 1px solid var(--input-border); border-radius: var(--radius-md);
+  overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; position: relative;
+}
+.product-card.selected { border-color: var(--gold-primary); box-shadow: 0 0 20px var(--gold-glow); }
+.product-img { width: 100%; height: 160px; object-fit: cover; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--panel-border); }
+.product-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.product-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+.product-price { font-size: 16px; font-weight: 800; color: var(--gold-light); margin-bottom: 12px; }
+
+.delete-btn {
+  position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.85); color: #fff;
+  border-radius: 50%; width: 28px; height: 28px; display: none; align-items: center; justify-content: center; font-weight: bold;
+}
+body.admin-mode .delete-btn { display: flex; }
+
+.select-btn {
+  width: 100%; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--gold-primary);
+  background: rgba(215, 180, 106, 0.1); color: var(--gold-light); font-weight: 700; font-size: 12px;
+}
+.product-card.selected .select-btn { background: var(--gold-primary); color: #080a0e; }
+
+.field { display: flex; flex-direction: column; margin-bottom: 14px; }
+label { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+input, textarea {
+  width: 100%; padding: 12px 14px; background: var(--input-bg); border: 1px solid var(--input-border);
+  border-radius: var(--radius-md); outline: none; transition: var(--transition); font-size: 13px;
+}
+input[type="file"] { padding: 8px; cursor: pointer; }
+
+.cta {
+  width: 100%; height: 50px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+  color: #080a0e; font-weight: 800; font-size: 14px; box-shadow: 0 10px 20px var(--gold-glow); transition: var(--transition);
+}
+.cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
+
+/* Modal & Klasör Yapısı */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 9999;
+  display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal-card {
+  width: 92%; max-width: 650px; background: var(--panel-bg); border: 1px solid var(--gold-primary);
+  border-radius: var(--radius-lg); padding: 28px; max-height: 90vh; overflow-y: auto; position: relative;
+}
+.modal-close { position: absolute; top: 16px; right: 16px; font-size: 18px; color: var(--text-muted); }
+
+.admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; }
+.tab-btn { padding: 8px 16px; border-radius: var(--radius-md); font-size: 13px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); }
+.tab-btn.active { background: var(--gold-primary); color: #080a0e; border-color: var(--gold-primary); }
+
+.order-folder-card { background: var(--input-bg); border: 1px solid var(--input-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; }
+.order-folder-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--panel-border); padding-bottom: 8px; }
+.order-folder-title { font-size: 15px; font-weight: 800; color: var(--gold-light); }
+.order-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
+.order-photo-item { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--panel-border); cursor: pointer; transition: var(--transition); }
+.order-photo-item:hover { transform: scale(1.05); border-color: var(--gold-primary); }
+
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 10000; background: var(--panel-bg); border: 1px solid var(--panel-border);
+  padding: 14px 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); transform: translateY(150%); transition: var(--transition); font-size: 13px;
+}
+.toast.show { transform: translateY(0); }
+.toast b { display: block; color: var(--gold-light); margin-bottom: 2px; }
+
+@media (max-width: 850px) { .shop-container { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="app">
+  <nav class="nav">
+    <div class="brand">
+      <div class="logo" id="adminLogoBtn" title="Yönetici Girişi">M</div>
+      <div>
+        <h1 style="font-size: 16px; letter-spacing: 0.15em;">MAMI WORKS</h1>
+        <span style="font-size: 10px; color: var(--gold-primary); letter-spacing: 0.2em;">DESIGN & AUTOMOTIVE LOGO STORE</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeBtn">🌙 Koyu Tema</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="eyebrow">MAMI WORKS CREATIVE STUDIO</div>
+    <h2 style="font-size: 28px; font-weight: 800;">Özel Araç Tasarımları & Vektörel Logolar</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-top: 6px;">Projelerinize özel illüstrasyon ve livery grafik tasarımları doğrudan sipariş verin.</p>
+  </section>
+
+  <main class="shop-container">
+    <section class="card">
+      <div class="card-head">
+        <h3 style="font-size: 18px; font-weight: 700;">Tasarım Kataloğu</h3>
+        <p style="color: var(--text-muted); font-size: 12px;">Sipariş etmek istediğiniz tasarımı seçiniz.</p>
+      </div>
+      <div class="products-grid" id="productsGrid"></div>
+    </section>
+
+    <aside class="card">
+      <div class="card-head">
+        <h3 style="font-size: 18px; font-weight: 700;">Sipariş Formu</h3>
+        <p style="color: var(--text-muted); font-size: 12px;">Proje detaylarınızı eksiksiz doldurun.</p>
+      </div>
+
+      <div class="field">
+        <label>Seçilen Tasarım</label>
+        <input type="text" id="selectedProductTitle" value="Lütfen bir tasarım seçin" readonly>
+      </div>
+
+      <div class="field">
+        <label>Tutar (TL)</label>
+        <input type="text" id="selectedProductPrice" value="0 TL" readonly>
+      </div>
+
+      <div class="field">
+        <label>Adınız Soyadınız *</label>
+        <input type="text" id="custName" placeholder="Ad Soyad giriniz...">
+      </div>
+
+      <div class="field">
+        <label>İletişim / WhatsApp Telefon *</label>
+        <input type="tel" id="custPhone" placeholder="05xx xxx xx xx">
+      </div>
+
+      <!-- YENİ EKLENEN ARAÇ FOTOĞRAFI YÜKLEME ALANI -->
+      <div class="field">
+        <label>Kendi Aracınızın Fotoğraflarını Yükleyin *</label>
+        <input type="file" id="custVehiclePhotos" accept="image/*" multiple>
+        <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Birden fazla araç fotoğrafı seçebilirsiniz.</span>
+      </div>
+
+      <div class="field">
+        <label>Özel Tasarım Notları & Detaylar</label>
+        <textarea id="custNotes" rows="3" placeholder="İstediğiniz ekstra detayları veya özel taleplerinizi yazın..."></textarea>
+      </div>
+
+      <button class="cta" id="orderBtn">WhatsApp Detaylı Sipariş Gönder →</button>
+    </aside>
+  </main>
+</div>
+
+<!-- Admin Modal -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-card">
+    <button class="modal-close" id="closeModalBtn">✕</button>
+
+    <div id="adminLoginBox">
+      <h3 style="font-size: 18px; margin-bottom: 6px;">Yönetici Girişi</h3>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Ürün ve sipariş yönetimi için giriş yapın.</p>
+      <div class="field">
+        <label>Admin Şifresi</label>
+        <input type="password" id="adminPassInput" placeholder="••••••••">
+      </div>
+      <button class="cta" id="adminLoginBtn">Giriş Yap</button>
+    </div>
+
+    <div id="adminControlsBox" style="display: none;">
+      <div class="admin-tabs">
+        <button class="tab-btn active" id="tabAddProductBtn">➕ Ürün Ekle</button>
+        <button class="tab-btn" id="tabCustomerFoldersBtn">📁 Müşteri Fotoğraf Klasörleri</button>
+      </div>
+
+      <!-- TAB 1: ÜRÜN EKLE -->
+      <div id="tabAddProductContent">
+        <h3 style="font-size: 16px; color: var(--gold-light); margin-bottom:12px;">Yeni Tasarım Yükle</h3>
+        <div class="field">
+          <label>Tasarım Adı</label>
+          <input type="text" id="newTitle" placeholder="Örn: Porsche Livery Tasarım">
+        </div>
+        <div class="field">
+          <label>Fiyat (TL)</label>
+          <input type="number" id="newPrice" placeholder="Örn: 2500">
+        </div>
+        <div class="field">
+          <label>Görsel Dosyası Seç</label>
+          <input type="file" id="newImgFile" accept="image/*">
+        </div>
+        <button class="cta" id="saveProductBtn" style="margin-top:8px;">➕ Ürünü Ekle</button>
+      </div>
+
+      <!-- TAB 2: MÜŞTERİ FOTOĞRAF KLASÖRLERİ -->
+      <div id="tabCustomerFoldersContent" style="display: none;">
+        <h3 style="font-size: 16px; color: var(--gold-light); margin-bottom:12px;">Gelen Müşteri Araç Fotoğrafları</h3>
+        <div id="customerFoldersList"></div>
+      </div>
+
+      <button class="cta" id="adminLogoutBtn" style="margin-top:20px; background: rgba(239, 68, 68, 0.2); color:#fca5a5; border:1px solid var(--danger);">Çıkış Yap</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase Realtime Database Entegrasyonu -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
+    authDomain: "bym-oto-yikama.firebaseapp.com",
+    databaseURL: "https://bym-oto-yikama-default-rtdb.firebaseio.com",
+    projectId: "bym-oto-yikama",
+    storageBucket: "bym-oto-yikama.firebasestorage.app",
+    messagingSenderId: "409475419804",
+    appId: "1:409475419804:web:b00588b14ba94990eda759"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.firebaseDb = db;
+  window.dbRef = ref;
+  window.dbSet = set;
+
+  onValue(ref(db, 'mami_products'), (snapshot) => {
+    const data = snapshot.val();
+    const list = data ? Object.values(data) : [];
+    localStorage.setItem("mami_products", JSON.stringify(list));
+    window.PRODUCTS = list;
+    if (typeof window.renderProducts === "function") window.renderProducts();
+  });
+
+  onValue(ref(db, 'mami_customer_orders'), (snapshot) => {
+    const data = snapshot.val();
+    const list = data ? Object.values(data) : [];
+    localStorage.setItem("mami_customer_orders", JSON.stringify(list));
+    window.CUSTOMER_ORDERS = list;
+    if (typeof window.renderCustomerFolders === "function") window.renderCustomerFolders();
+  });
+</script>
+
+<script>
+const WHATSAPP_PHONE = "905385475603";
+const ADMIN_PASS = "muho6060.";
+
+let PRODUCTS = JSON.parse(localStorage.getItem("mami_products") || "[]");
+let CUSTOMER_ORDERS = JSON.parse(localStorage.getItem("mami_customer_orders") || "[]");
+let selectedProduct = null;
+
+function saveProducts() {
+  localStorage.setItem("mami_products", JSON.stringify(PRODUCTS));
+  if (window.firebaseDb && window.dbRef && window.dbSet) {
+    window.dbSet(window.dbRef(window.firebaseDb, "mami_products"), PRODUCTS);
+  }
+}
+
+function saveCustomerOrders() {
+  localStorage.setItem("mami_customer_orders", JSON.stringify(CUSTOMER_ORDERS));
+  if (window.firebaseDb && window.dbRef && window.dbSet) {
+    window.dbSet(window.dbRef(window.firebaseDb, "mami_customer_orders"), CUSTOMER_ORDERS);
+  }
+}
+
+const $ = id => document.getElementById(id);
+
+function toast(title, text=""){
+  const el=$("toast"); el.innerHTML=`<b>${title}</b>${text}`; el.classList.add("show");
+  clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
+}
+
+function deleteProduct(id, e) {
+  e.stopPropagation();
+  PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+  saveProducts();
+  renderProducts();
+  toast("Silindi", "Tasarım kaldırıldı.");
+}
+
+function deleteCustomerFolder(orderId) {
+  CUSTOMER_ORDERS = CUSTOMER_ORDERS.filter(o => o.id !== orderId);
+  saveCustomerOrders();
+  renderCustomerFolders();
+  toast("Silindi", "Müşteri klasörü ve fotoğrafları silindi.");
+}
+
+function renderProducts() {
+  const grid = $("productsGrid");
+  grid.innerHTML = "";
+  if (!PRODUCTS || PRODUCTS.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">🎨 Henüz eklenmiş tasarım yok. Admin paneline giriş yapıp görsel ekleyebilirsiniz.</div>`;
+    return;
+  }
+  PRODUCTS.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card" + (selectedProduct && selectedProduct.id === p.id ? " selected" : "");
+    card.innerHTML = `
+      <button class="delete-btn" onclick="deleteProduct('${p.id}', event)">✕</button>
+      <img src="${p.img}" class="product-img">
+      <div class="product-body">
+        <div>
+          <div class="product-title">${p.title}</div>
+          <div class="product-price">${Number(p.price).toLocaleString("tr-TR")} TL</div>
+        </div>
+        <button class="select-btn">${selectedProduct && selectedProduct.id === p.id ? "Seçildi ✓" : "Tasarımı Seç"}</button>
+      </div>
+    `;
+    card.onclick = () => {
+      selectedProduct = p;
+      $("selectedProductTitle").value = p.title;
+      $("selectedProductPrice").value = p.price.toLocaleString("tr-TR") + " TL";
+      renderProducts();
+    };
+    grid.appendChild(card);
+  });
+}
+window.renderProducts = renderProducts;
+
+function renderCustomerFolders() {
+  const listContainer = $("customerFoldersList");
+  listContainer.innerHTML = "";
+
+  if (!CUSTOMER_ORDERS || CUSTOMER_ORDERS.length === 0) {
+    listContainer.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">Henüz yüklenmiş müşteri araç fotoğrafı bulunmuyor.</p>`;
+    return;
+  }
+
+  CUSTOMER_ORDERS.forEach(order => {
+    const card = document.createElement("div");
+    card.className = "order-folder-card";
+
+    let photosHTML = "";
+    if (order.photos && order.photos.length > 0) {
+      photosHTML = order.photos.map(p => `<img src="${p}" class="order-photo-item" onclick="window.open('${p}', '_blank')" title="Büyütmek için tıklayın">`).join("");
+    } else {
+      photosHTML = `<p style="font-size:11px; color:var(--text-muted);">Fotoğraf yüklenmedi.</p>`;
+    }
+
+    card.innerHTML = `
+      <div class="order-folder-header">
+        <div>
+          <div class="order-folder-title">📁 ${order.custName} (${order.custPhone})</div>
+          <div style="font-size:11px; color:var(--text-muted);">Tarih: ${order.date} | Tasarım: <b>${order.productTitle}</b></div>
+        </div>
+        <button onclick="deleteCustomerFolder('${order.id}')" style="color:var(--danger); font-weight:bold; font-size:12px;">Klasörü Sil</button>
+      </div>
+      <div style="font-size:12px; margin-bottom:8px;"><b>Özel Notlar:</b> ${order.notes || 'Yok'}</div>
+      <div style="font-size:12px; font-weight:bold; margin-bottom:4px; color:var(--gold-light);">Yüklenen Araç Fotoğrafları (${order.photos ? order.photos.length : 0} Adet):</div>
+      <div class="order-photo-grid">${photosHTML}</div>
+    `;
+
+    listContainer.appendChild(card);
+  });
+}
+window.renderCustomerFolders = renderCustomerFolders;
+
+/* Sipariş Gönderimi & Fotoğrafların Admin Paneline Kaydedilmesi */
+$("orderBtn").onclick = async () => {
+  if (!selectedProduct) { toast("Tasarım Seçilmedi", "Lütfen bir tasarım seçin."); return; }
+  const name = $("custName").value.trim();
+  const phone = $("custPhone").value.trim();
+  const notes = $("custNotes").value.trim();
+  const fileInput = $("custVehiclePhotos");
+
+  if (!name || !phone) { toast("Bilgiler Eksik", "Lütfen Ad Soyad ve Telefon numarası giriniz."); return; }
+
+  const files = Array.from(fileInput.files);
+  const photoBase64List = [];
+
+  if (files.length > 0) {
+    toast("Yükleniyor...", "Araç fotoğrafları admin paneline kaydediliyor...");
+    for (const file of files) {
+      const b64 = await new Promise((res) => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result);
+        r.readAsDataURL(file);
+      });
+      photoBase64List.push(b64);
+    }
+  }
+
+  // Sipariş verilerini ve Araç Görsellerini Klasör Olarak Kaydet
+  const orderData = {
+    id: "ord_" + Date.now(),
+    custName: name,
+    custPhone: phone,
+    productTitle: selectedProduct.title,
+    productPrice: selectedProduct.price,
+    notes: notes,
+    photos: photoBase64List,
+    date: new Date().toLocaleString("tr-TR")
+  };
+
+  CUSTOMER_ORDERS.unshift(orderData);
+  saveCustomerOrders();
+
+  // WhatsApp Bilgilendirmesi
+  const msg = [
+    "🔥 *MAMI WORKS — YENİ TASARIM SİPARİŞİ*",
+    "----------------------------------",
+    `🎨 *Seçilen Tasarım:* ${selectedProduct.title}`,
+    `💰 *Tasarım Tutarı:* ${selectedProduct.price.toLocaleString("tr-TR")} TL`,
+    "----------------------------------",
+    "👤 *MÜŞTERİ BİLGİLERİ*",
+    `• *Ad Soyad:* ${name}`,
+    `• *Telefon:* ${phone}`,
+    "----------------------------------",
+    "📷 *ARAÇ FOTOĞRAFLARI*",
+    photoBase64List.length > 0 ? `• ${photoBase64List.length} Adet araç fotoğrafı Admin Panelinize Yüklendi!` : "• Fotoğraf yüklenmedi.",
+    notes ? `• *Özel Notlar:* ${notes}` : "",
+    "----------------------------------",
+    "🚀 Sipariş detaylarımı onaylıyorum!"
+  ].filter(Boolean).join("\n");
+
+  window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`, "_blank");
+};
+
+/* Admin Paneli İşlemleri */
+$("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
+$("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
+
+$("adminLoginBtn").onclick = () => {
+  if ($("adminPassInput").value === ADMIN_PASS) {
+    $("adminLoginBox").style.display = "none";
+    $("adminControlsBox").style.display = "block";
+    document.body.classList.add("admin-mode");
+    renderProducts();
+    renderCustomerFolders();
+    toast("Admin Girişi", "Yönetici paneli aktif.");
+  } else {
+    toast("Hata", "Yanlış admin şifresi!");
+  }
+};
+
+$("tabAddProductBtn").onclick = () => {
+  $("tabAddProductBtn").classList.add("active");
+  $("tabCustomerFoldersBtn").classList.remove("active");
+  $("tabAddProductContent").style.display = "block";
+  $("tabCustomerFoldersContent").style.display = "none";
+};
+
+$("tabCustomerFoldersBtn").onclick = () => {
+  $("tabCustomerFoldersBtn").classList.add("active");
+  $("tabAddProductBtn").classList.remove("active");
+  $("tabAddProductContent").style.display = "none";
+  $("tabCustomerFoldersContent").style.display = "block";
+  renderCustomerFolders();
+};
+
+$("saveProductBtn").onclick = () => {
+  const title = $("newTitle").value.trim();
+  const price = Number($("newPrice").value);
+  const fileInput = $("newImgFile");
+
+  if (!title || !price || !fileInput.files[0]) {
+    toast("Eksik Veri", "Lütfen tüm alanları doldurun ve bir görsel seçin.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    PRODUCTS.push({ id: "p_" + Date.now(), title, price, img: e.target.result });
+    saveProducts();
+    renderProducts();
+    $("newTitle").value = ""; $("newPrice").value = ""; $("newImgFile").value = "";
+    toast("Başarılı", "Tasarım kataloğa eklendi.");
+  };
+  reader.readAsDataURL(fileInput.files[0]);
+};
+
+$("adminLogoutBtn").onclick = () => {
+  $("adminLoginBox").style.display = "block";
+  $("adminControlsBox").style.display = "none";
+  document.body.classList.remove("admin-mode");
+  renderProducts();
+  $("adminModal").classList.remove("active");
+};
+
+/* Arka Plan Parçacık Efekti */
+const canvas = $("particleCanvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener("resize", resizeCanvas); resizeCanvas();
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.5 + 0.2;
+  }
+  update() {
+    this.x += this.speedX; this.y += this.speedY;
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+  }
+  draw() {
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(215, 180, 106, ${this.opacity})`; ctx.fill();
+  }
+}
+function initParticles() { particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle()); }
+function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
+initParticles(); animateParticles();
+
+$("themeBtn").onclick = () => {
+  document.body.classList.toggle("light-theme");
+  $("themeBtn").innerHTML = document.body.classList.contains("light-theme") ? "☀️ Açık Tema" : "🌙 Koyu Tema";
+};
+
+renderProducts();
+</script>
+</body>
+</html>
