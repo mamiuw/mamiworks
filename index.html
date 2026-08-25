@@ -318,6 +318,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
       <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">Yönetim paneline erişmek için şifrenizi girin.</p>
       <div class="field">
         <label>Yönetici Şifresi</label>
+        <!-- type="password" yapıldı ki yazarken şifre gizlensin -->
         <input type="password" id="adminPassInput" placeholder="••••••••">
       </div>
       <button class="cta" id="adminLoginBtn">Giriş Yap</button>
@@ -422,7 +423,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <script>
 const WHATSAPP_PHONE = "905385475603";
-// Şifre kaynak koddan tamamen çıkarıldı. Veritabanından doğrulanır.
+// Şifre kaynak koddan tamamen çıkarıldı. Sadece Firebase veritabanından kontrol edilir.
 
 window.PRODUCTS = [];
 window.CUSTOMER_ORDERS = [];
@@ -739,7 +740,7 @@ $("confirmOrderAndRedirectBtn").onclick = () => {
 $("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
 $("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
 
-/* Güvenli Veritabanı Üzerinden Şifre Doğrulama API Mantığı */
+/* Tamamen Veritabanından Şifre Çekme (Kodda Şifre Metni Bulunmaz) */
 $("adminLoginBtn").onclick = async () => {
   const enteredPass = $("adminPassInput").value.trim();
   if (!enteredPass) {
@@ -748,17 +749,15 @@ $("adminLoginBtn").onclick = async () => {
   }
 
   try {
-    // Firebase veritabanından şifreyi çekiyoruz (Kaynak kodda şifre görünmez)
     const dbRef = window.dbRef(window.firebaseDb);
     const snapshot = await window.dbGet(window.dbChild(dbRef, 'mami_admin/password'));
     
-    let correctPass = "muho6060."; // Veritabanında şifre tanımlı değilse yedek varsayılan şifre
-    if (snapshot.exists()) {
-      correctPass = snapshot.val();
-    } else {
-      // Eğer veritabanında henüz mami_admin/password yoksa ilk girişte otomatik oluşturabiliriz
-      window.dbSet(window.dbRef(window.firebaseDb, 'mami_admin/password'), correctPass);
+    if (!snapshot.exists()) {
+      toast("Sistem Hatası", "Veritabanında yönetici şifresi tanımlanmamış. Lütfen Firebase konsolundan mami_admin/password düğümüne şifrenizi ekleyin.");
+      return;
     }
+
+    const correctPass = snapshot.val();
 
     if (enteredPass === correctPass) {
       $("adminLoginBox").style.display = "none";
