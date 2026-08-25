@@ -750,10 +750,10 @@ $("adminLoginBtn").onclick = async () => {
 
   try {
     const dbRef = window.dbRef(window.firebaseDb);
-    const snapshot = await window.dbGet(window.dbChild(dbRef, 'mami_admin/password'));
+    const snapshot = await window.dbGet(window.dbChild(dbRef, 'admin_settings'));
     
     if (!snapshot.exists()) {
-      toast("Sistem Hatası", "Veritabanında yönetici şifresi tanımlanmamış. Lütfen Firebase konsolundan mami_admin/password düğümüne şifrenizi ekleyin.");
+      toast("Sistem Hatası", "Veritabanında yönetici şifresi tanımlanmamış. Lütfen Firebase konsolundan admin_settings düğümüne şifrenizi ekleyin.");
       return;
     }
 
