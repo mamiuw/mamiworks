@@ -750,17 +750,9 @@ $("adminLoginBtn").onclick = async () => {
 
   try {
     const dbRef = window.dbRef(window.firebaseDb);
-    try {
-    const dbRef = window.dbRef(window.firebaseDb);
-    const snapshot = await window.dbGet(window.dbChild(dbRef, 'admin_settings'));
+    const snapshot = await window.dbGet(window.dbChild(dbRef, 'admin_settings/password'));
 
-    if (!snapshot.exists()) {
-        toast("Sistem Hatası", "Veritabanında admin_settings bulunamadı.");
-        return;
-    }
-
-    const data = snapshot.val();
-    const correctPass = String(data.password || "").trim();
+    const correctPass = String(snapshot.val() || "").trim();
     const cleanEntered = String(enteredPass).trim();
 
     if (cleanEntered === correctPass && cleanEntered !== "") {
@@ -776,6 +768,7 @@ $("adminLoginBtn").onclick = async () => {
 } catch (err) {
     console.error("Şifre doğrulama hatası:", err);
     toast("Bağlantı Hatası", "Şifre doğrulanırken bir hata oluştu.");
+}
 }
     if (String(enteredPass).trim() === String(correctPass).trim()) {
       $("adminLoginBox").style.display = "none";
