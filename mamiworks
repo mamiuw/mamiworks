@@ -1,151 +1,202 @@
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAMI WORKS — Premium Automotive Graphic & Logo Store</title>
+<title>MAMI WORKS — Studio & Custom Automotive Graphics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg-gradient: radial-gradient(circle at 50% 0%, #151a24 0%, #080a0e 100%);
-  --panel-bg: rgba(18, 22, 31, 0.75);
-  --panel-border: rgba(255, 255, 255, 0.08);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --gold-primary: #d7b46a;
-  --gold-light: #f3d89d;
-  --gold-glow: rgba(215, 180, 106, 0.25);
-  --input-bg: rgba(0, 0, 0, 0.3);
-  --input-border: rgba(255, 255, 255, 0.1);
-  --danger: #ef4444;
-  --radius-lg: 20px;
-  --radius-md: 12px;
-  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg: #090a0f;
+  --panel: rgba(18, 22, 32, 0.65);
+  --panel-solid: #111520;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(215, 180, 106, 0.4);
+  --text: #f8fafc;
+  --muted: #8e9aaf;
+  --gold: #d7b46a;
+  --gold-glow: rgba(215, 180, 106, 0.2);
+  --gold-grad: linear-gradient(135deg, #f3d89d 0%, #d7b46a 50%, #a8833c 100%);
+  --input-bg: rgba(6, 9, 14, 0.6);
+  --danger: #ff4d4d;
+  --success: #10b981;
+  --radius: 16px;
+  --shadow: 0 20px 40px -15px rgba(0,0,0,0.6);
+  --transition: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body.light-theme {
-  --bg-gradient: radial-gradient(circle at 50% 0%, #f1f5f9 0%, #e2e8f0 100%);
-  --panel-bg: rgba(255, 255, 255, 0.85);
-  --panel-border: rgba(0, 0, 0, 0.08);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --gold-primary: #b48835;
-  --gold-light: #d7b46a;
-  --gold-glow: rgba(180, 136, 53, 0.2);
-  --input-bg: rgba(255, 255, 255, 0.8);
-  --input-border: rgba(0, 0, 0, 0.15);
+body.light-mode {
+  --bg: #f1f5f9;
+  --panel: rgba(255, 255, 255, 0.75);
+  --panel-solid: #ffffff;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-active: rgba(180, 136, 53, 0.4);
+  --text: #0f172a;
+  --muted: #64748b;
+  --input-bg: rgba(241, 245, 249, 0.8);
+  --shadow: 0 10px 30px -10px rgba(0,0,0,0.08);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  min-height: 100vh; color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg-gradient); background-attachment: fixed; line-height: 1.5; padding: 24px 16px; position: relative;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { min-height: 100vh; color: var(--text); background: var(--bg); padding: 24px 16px; overflow-x: hidden; position: relative; }
 
-#particleCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
-button, input, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; border: none; background: none; }
+#particleCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
-.app { max-width: 1200px; margin: 0 auto; position: relative; z-index: 10; }
+.app { max-width: 1240px; margin: 0 auto; position: relative; z-index: 2; }
 
+/* Navbar */
 .nav {
-  display: flex; justify-content: space-between; align-items: center; padding: 12px 20px;
-  background: var(--panel-bg); border: 1px solid var(--panel-border); backdrop-filter: blur(16px);
-  border-radius: var(--radius-lg); margin-bottom: 24px;
+  display: flex; justify-content: space-between; align-items: center; padding: 14px 24px;
+  background: var(--panel); backdrop-filter: blur(20px); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow);
 }
-
 .brand { display: flex; align-items: center; gap: 14px; }
 .logo {
-  width: 44px; height: 44px; border-radius: var(--radius-md); background: linear-gradient(135deg, #2a2215, #141009);
-  border: 1px solid var(--gold-primary); display: flex; align-items: center; justify-content: center;
-  color: var(--gold-light); font-weight: 800; font-size: 20px; box-shadow: 0 0 15px var(--gold-glow); cursor: pointer;
+  width: 44px; height: 44px; border-radius: 12px; background: #000;
+  border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center;
+  color: var(--gold); font-weight: 800; font-size: 20px; box-shadow: 0 0 15px var(--gold-glow);
+  cursor: pointer; transition: transform 0.3s var(--transition);
 }
+.logo:hover { transform: scale(1.05) rotate(-3deg); }
+.brand h1 { font-size: 16px; font-weight: 800; letter-spacing: 0.12em; line-height: 1.1; }
+.brand span { font-size: 10px; color: var(--gold); letter-spacing: 0.22em; font-weight: 700; display: block; }
 
 .theme-toggle {
-  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); padding: 8px 14px;
-  border-radius: 99px; font-size: 12px; font-weight: 600;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); padding: 8px 16px;
+  border-radius: 99px; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer;
+  transition: all 0.3s var(--transition);
 }
+.theme-toggle:hover { border-color: var(--gold); }
 
+/* Hero */
 .hero {
-  border: 1px solid var(--panel-border); border-radius: var(--radius-lg); padding: 36px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(12px); margin-bottom: 24px;
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 36px;
+  background: linear-gradient(135deg, rgba(215, 180, 106, 0.08) 0%, rgba(0, 0, 0, 0) 100%), var(--panel);
+  backdrop-filter: blur(16px); margin-bottom: 24px; position: relative; overflow: hidden;
 }
-.eyebrow { color: var(--gold-primary); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+.hero::after {
+  content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 100%;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%); pointer-events: none;
+}
+.eyebrow { color: var(--gold); font-size: 11px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 6px; }
+.hero h2 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.hero p { color: var(--muted); font-size: 14px; max-width: 600px; margin-top: 6px; }
 
-.shop-container { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
-.card { background: var(--panel-bg); border: 1px solid var(--panel-border); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-lg); }
-.card-head { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--panel-border); }
+/* Grid Main */
+.shop-grid { display: grid; grid-template-columns: 1fr 400px; gap: 24px; }
+.card { background: var(--panel); border: 1px solid var(--border); backdrop-filter: blur(20px); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+.card-head { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.card-head h3 { font-size: 18px; font-weight: 700; }
+.card-head p { color: var(--muted); font-size: 12px; margin-top: 2px; }
 
-.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+/* Catalog */
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
 .product-card {
-  background: var(--input-bg); border: 1px solid var(--input-border); border-radius: var(--radius-md);
-  overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; position: relative;
+  background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; transition: all 0.3s var(--transition); display: flex; flex-direction: column;
+  position: relative; cursor: pointer;
 }
-.product-card.selected { border-color: var(--gold-primary); box-shadow: 0 0 20px var(--gold-glow); }
-.product-img { width: 100%; height: 160px; object-fit: cover; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--panel-border); }
+.product-card:hover { transform: translateY(-4px); border-color: var(--border-active); box-shadow: 0 12px 30px var(--gold-glow); }
+.product-card.selected { border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow); background: rgba(215, 180, 106, 0.05); }
+.product-img { width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid var(--border); }
 .product-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-.product-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
-.product-price { font-size: 16px; font-weight: 800; color: var(--gold-light); margin-bottom: 12px; }
+.product-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.product-price { font-size: 15px; font-weight: 800; color: var(--gold); margin-bottom: 12px; }
+.select-btn {
+  width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--gold);
+  background: rgba(215, 180, 106, 0.1); color: var(--gold); font-weight: 700; font-size: 12px; transition: 0.2s;
+}
+.product-card.selected .select-btn { background: var(--gold-grad); color: #000; border: none; }
 
 .delete-btn {
-  position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.85); color: #fff;
-  border-radius: 50%; width: 28px; height: 28px; display: none; align-items: center; justify-content: center; font-weight: bold;
+  position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: #fff;
+  border-radius: 50%; width: 26px; height: 26px; display: none; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: none; cursor: pointer;
 }
 body.admin-mode .delete-btn { display: flex; }
 
-.select-btn {
-  width: 100%; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--gold-primary);
-  background: rgba(215, 180, 106, 0.1); color: var(--gold-light); font-weight: 700; font-size: 12px;
-}
-.product-card.selected .select-btn { background: var(--gold-primary); color: #080a0e; }
-
-.field { display: flex; flex-direction: column; margin-bottom: 14px; }
-label { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+/* Form Elements */
+.field { display: flex; flex-direction: column; margin-bottom: 16px; }
+label { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
 input, textarea {
-  width: 100%; padding: 12px 14px; background: var(--input-bg); border: 1px solid var(--input-border);
-  border-radius: var(--radius-md); outline: none; transition: var(--transition); font-size: 13px;
+  width: 100%; padding: 12px 14px; background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text); outline: none; transition: all 0.2s; font-size: 13px;
 }
-input[type="file"] { padding: 8px; cursor: pointer; }
+input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
 
+/* Drag & Drop Upload Zone */
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: 12px; padding: 20px 14px; text-align: center;
+  background: var(--input-bg); cursor: pointer; transition: all 0.3s var(--transition); position: relative;
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--gold); background: rgba(215, 180, 106, 0.05); }
+.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.drop-zone-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+.drop-zone-text { font-size: 12px; font-weight: 600; color: var(--text); }
+.drop-zone-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* Upload Preview Mini Grid */
+.upload-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 10px; }
+.upload-preview-item { width: 100%; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); }
+
+/* Buttons */
 .cta {
-  width: 100%; height: 50px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
-  color: #080a0e; font-weight: 800; font-size: 14px; box-shadow: 0 10px 20px var(--gold-glow); transition: var(--transition);
+  width: 100%; height: 50px; border-radius: 12px; background: var(--gold-grad);
+  color: #000; font-weight: 800; font-size: 14px; border: none; cursor: pointer;
+  box-shadow: 0 8px 20px var(--gold-glow); transition: all 0.2s var(--transition);
 }
-.cta:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-/* Modal & Klasör Yapısı */
+/* Modal & Folder View */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 9999;
-  display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
+  z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.3s;
 }
 .modal-overlay.active { opacity: 1; visibility: visible; }
 .modal-card {
-  width: 92%; max-width: 650px; background: var(--panel-bg); border: 1px solid var(--gold-primary);
-  border-radius: var(--radius-lg); padding: 28px; max-height: 90vh; overflow-y: auto; position: relative;
+  width: 92%; max-width: 720px; background: var(--panel-solid); border: 1px solid var(--border-active);
+  border-radius: var(--radius); padding: 32px; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
-.modal-close { position: absolute; top: 16px; right: 16px; font-size: 18px; color: var(--text-muted); }
+.modal-close { position: absolute; top: 20px; right: 20px; font-size: 20px; color: var(--muted); cursor: pointer; border: none; background: none; }
 
-.admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; }
-.tab-btn { padding: 8px 16px; border-radius: var(--radius-md); font-size: 13px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); }
-.tab-btn.active { background: var(--gold-primary); color: #080a0e; border-color: var(--gold-primary); }
+.admin-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.tab-btn {
+  padding: 10px 18px; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--muted);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
+}
+.tab-btn.active { background: var(--gold-grad); color: #000; border-color: transparent; }
 
-.order-folder-card { background: var(--input-bg); border: 1px solid var(--input-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; }
-.order-folder-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--panel-border); padding-bottom: 8px; }
-.order-folder-title { font-size: 15px; font-weight: 800; color: var(--gold-light); }
-.order-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
-.order-photo-item { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--panel-border); cursor: pointer; transition: var(--transition); }
-.order-photo-item:hover { transform: scale(1.05); border-color: var(--gold-primary); }
+/* Admin Customer Folder Cards */
+.folder-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+.folder-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.folder-title { font-size: 16px; font-weight: 800; color: var(--gold); }
+.folder-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.folder-photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 12px; }
+.folder-photo-thumb {
+  width: 100%; height: 95px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border);
+  cursor: pointer; transition: 0.2s var(--transition);
+}
+.folder-photo-thumb:hover { transform: scale(1.05); border-color: var(--gold); }
 
+/* Lightbox Modal */
+.lightbox-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex;
+  align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.2s;
+}
+.lightbox-overlay.active { opacity: 1; visibility: visible; }
+.lightbox-img { max-width: 90vw; max-height: 85vh; border-radius: 12px; border: 1px solid var(--border); }
+
+/* Toast */
 .toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 10000; background: var(--panel-bg); border: 1px solid var(--panel-border);
-  padding: 14px 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); transform: translateY(150%); transition: var(--transition); font-size: 13px;
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999; background: var(--panel-solid);
+  border: 1px solid var(--border-active); padding: 14px 20px; border-radius: 12px; box-shadow: var(--shadow);
+  transform: translateY(150%); transition: 0.3s var(--transition); font-size: 13px;
 }
 .toast.show { transform: translateY(0); }
-.toast b { display: block; color: var(--gold-light); margin-bottom: 2px; }
+.toast b { display: block; color: var(--gold); margin-bottom: 2px; }
 
-@media (max-width: 850px) { .shop-container { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .shop-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -155,71 +206,76 @@ input[type="file"] { padding: 8px; cursor: pointer; }
 <div class="app">
   <nav class="nav">
     <div class="brand">
-      <div class="logo" id="adminLogoBtn" title="Yönetici Girişi">M</div>
+      <div class="logo" id="adminLogoBtn" title="Yönetici Paneli">M</div>
       <div>
-        <h1 style="font-size: 16px; letter-spacing: 0.15em;">MAMI WORKS</h1>
-        <span style="font-size: 10px; color: var(--gold-primary); letter-spacing: 0.2em;">DESIGN & AUTOMOTIVE LOGO STORE</span>
+        <h1>MAMI WORKS</h1>
+        <span>CREATIVE AUTOMOTIVE STUDIO</span>
       </div>
     </div>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="themeBtn">🌙 Koyu Tema</button>
-    </div>
+    <button class="theme-toggle" id="themeBtn">🌙 Koyu Mod</button>
   </nav>
 
   <section class="hero">
-    <div class="eyebrow">MAMI WORKS CREATIVE STUDIO</div>
-    <h2 style="font-size: 28px; font-weight: 800;">Özel Araç Tasarımları & Vektörel Logolar</h2>
-    <p style="color: var(--text-muted); font-size: 14px; margin-top: 6px;">Projelerinize özel illüstrasyon ve livery grafik tasarımları doğrudan sipariş verin.</p>
+    <div class="eyebrow">MAMI WORKS STUDIO</div>
+    <h2>Özel Livery & Vektörel Tasarım Platformu</h2>
+    <p>Aracınıza veya markanıza özel yüksek çözünürlüklü grafik tasarımları doğrudan sipariş edin.</p>
   </section>
 
-  <main class="shop-container">
+  <main class="shop-grid">
+    <!-- Katalog -->
     <section class="card">
       <div class="card-head">
-        <h3 style="font-size: 18px; font-weight: 700;">Tasarım Kataloğu</h3>
-        <p style="color: var(--text-muted); font-size: 12px;">Sipariş etmek istediğiniz tasarımı seçiniz.</p>
+        <h3>Tasarım Kataloğu</h3>
+        <p>Sipariş etmek istediğiniz konsept tasarımı seçiniz.</p>
       </div>
       <div class="products-grid" id="productsGrid"></div>
     </section>
 
+    <!-- Form -->
     <aside class="card">
       <div class="card-head">
-        <h3 style="font-size: 18px; font-weight: 700;">Sipariş Formu</h3>
-        <p style="color: var(--text-muted); font-size: 12px;">Proje detaylarınızı eksiksiz doldurun.</p>
+        <h3>Sipariş Detayları</h3>
+        <p>Bilgilerinizi ve araç fotoğraflarınızı iletin.</p>
       </div>
 
       <div class="field">
         <label>Seçilen Tasarım</label>
-        <input type="text" id="selectedProductTitle" value="Lütfen bir tasarım seçin" readonly>
+        <input type="text" id="selectedProductTitle" value="Lütfen listeden seçim yapın" readonly>
       </div>
 
       <div class="field">
         <label>Tutar (TL)</label>
-        <input type="text" id="selectedProductPrice" value="0 TL" readonly>
+        <input type="text" id="selectedProductPrice" value="0 TL" readonly style="color:var(--gold); font-weight:800;">
       </div>
 
       <div class="field">
         <label>Adınız Soyadınız *</label>
-        <input type="text" id="custName" placeholder="Ad Soyad giriniz...">
+        <input type="text" id="custName" placeholder="Örn: Emin Yılmaz">
       </div>
 
       <div class="field">
-        <label>İletişim / WhatsApp Telefon *</label>
+        <label>WhatsApp / Telefon *</label>
         <input type="tel" id="custPhone" placeholder="05xx xxx xx xx">
       </div>
 
-      <!-- YENİ EKLENEN ARAÇ FOTOĞRAFI YÜKLEME ALANI -->
+      <!-- Sürükle Bırak Fotoğraf Yükleyici -->
       <div class="field">
-        <label>Kendi Aracınızın Fotoğraflarını Yükleyin *</label>
-        <input type="file" id="custVehiclePhotos" accept="image/*" multiple>
-        <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Birden fazla araç fotoğrafı seçebilirsiniz.</span>
+        <label>Araç Fotoğraflarınız *</label>
+        <div class="drop-zone" id="dropZone">
+          <span class="drop-zone-icon">📷</span>
+          <span class="drop-zone-text">Fotoğrafları Sürükleyin veya Tıklayın</span>
+          <span class="drop-zone-sub">Nitelikli açıdan birden fazla fotoğraf yükleyebilirsiniz</span>
+          <input type="file" id="custVehiclePhotos" accept="image/*" multiple>
+        </div>
+        <div class="upload-preview-grid" id="previewGrid"></div>
       </div>
 
       <div class="field">
-        <label>Özel Tasarım Notları & Detaylar</label>
-        <textarea id="custNotes" rows="3" placeholder="İstediğiniz ekstra detayları veya özel taleplerinizi yazın..."></textarea>
+        <label>Özel Tasarım Notları</label>
+        <textarea id="custNotes" rows="3" placeholder="Renk tercihleri, sponsor logosu veya özel istekleriniz..."></textarea>
       </div>
 
-      <button class="cta" id="orderBtn">WhatsApp Detaylı Sipariş Gönder →</button>
+      <button class="cta" id="orderBtn">WhatsApp Sipariş Talebi Gönder →</button>
     </aside>
   </main>
 </div>
@@ -230,10 +286,10 @@ input[type="file"] { padding: 8px; cursor: pointer; }
     <button class="modal-close" id="closeModalBtn">✕</button>
 
     <div id="adminLoginBox">
-      <h3 style="font-size: 18px; margin-bottom: 6px;">Yönetici Girişi</h3>
-      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Ürün ve sipariş yönetimi için giriş yapın.</p>
+      <h3 style="font-size: 20px; font-weight:800; margin-bottom: 6px;">Admin Paneli</h3>
+      <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">Yönetici yetkisi ile giriş yapın.</p>
       <div class="field">
-        <label>Admin Şifresi</label>
+        <label>Şifre</label>
         <input type="password" id="adminPassInput" placeholder="••••••••">
       </div>
       <button class="cta" id="adminLoginBtn">Giriş Yap</button>
@@ -241,42 +297,43 @@ input[type="file"] { padding: 8px; cursor: pointer; }
 
     <div id="adminControlsBox" style="display: none;">
       <div class="admin-tabs">
-        <button class="tab-btn active" id="tabAddProductBtn">➕ Ürün Ekle</button>
-        <button class="tab-btn" id="tabCustomerFoldersBtn">📁 Müşteri Fotoğraf Klasörleri</button>
+        <button class="tab-btn active" id="tabAddProductBtn">➕ Ürün Yükle</button>
+        <button class="tab-btn" id="tabCustomerFoldersBtn">📁 Müşteri Klasörleri</button>
       </div>
 
-      <!-- TAB 1: ÜRÜN EKLE -->
       <div id="tabAddProductContent">
-        <h3 style="font-size: 16px; color: var(--gold-light); margin-bottom:12px;">Yeni Tasarım Yükle</h3>
         <div class="field">
           <label>Tasarım Adı</label>
-          <input type="text" id="newTitle" placeholder="Örn: Porsche Livery Tasarım">
+          <input type="text" id="newTitle" placeholder="Örn: GT3 RS Custom Livery">
         </div>
         <div class="field">
           <label>Fiyat (TL)</label>
-          <input type="number" id="newPrice" placeholder="Örn: 2500">
+          <input type="number" id="newPrice" placeholder="Örn: 3500">
         </div>
         <div class="field">
-          <label>Görsel Dosyası Seç</label>
+          <label>Görsel Dosyası</label>
           <input type="file" id="newImgFile" accept="image/*">
         </div>
-        <button class="cta" id="saveProductBtn" style="margin-top:8px;">➕ Ürünü Ekle</button>
+        <button class="cta" id="saveProductBtn">➕ Ürünü Kataloğa Ekle</button>
       </div>
 
-      <!-- TAB 2: MÜŞTERİ FOTOĞRAF KLASÖRLERİ -->
       <div id="tabCustomerFoldersContent" style="display: none;">
-        <h3 style="font-size: 16px; color: var(--gold-light); margin-bottom:12px;">Gelen Müşteri Araç Fotoğrafları</h3>
         <div id="customerFoldersList"></div>
       </div>
 
-      <button class="cta" id="adminLogoutBtn" style="margin-top:20px; background: rgba(239, 68, 68, 0.2); color:#fca5a5; border:1px solid var(--danger);">Çıkış Yap</button>
+      <button class="cta" id="adminLogoutBtn" style="margin-top:24px; background: rgba(239, 68, 68, 0.15); color:var(--danger); border:1px solid var(--danger); box-shadow:none;">Çıkış Yap</button>
     </div>
   </div>
 </div>
 
+<!-- Lightbox Modal -->
+<div class="lightbox-overlay" id="lightboxModal">
+  <img src="" class="lightbox-img" id="lightboxImg">
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- Firebase Realtime Database Entegrasyonu -->
+<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -322,20 +379,7 @@ const ADMIN_PASS = "muho6060.";
 let PRODUCTS = JSON.parse(localStorage.getItem("mami_products") || "[]");
 let CUSTOMER_ORDERS = JSON.parse(localStorage.getItem("mami_customer_orders") || "[]");
 let selectedProduct = null;
-
-function saveProducts() {
-  localStorage.setItem("mami_products", JSON.stringify(PRODUCTS));
-  if (window.firebaseDb && window.dbRef && window.dbSet) {
-    window.dbSet(window.dbRef(window.firebaseDb, "mami_products"), PRODUCTS);
-  }
-}
-
-function saveCustomerOrders() {
-  localStorage.setItem("mami_customer_orders", JSON.stringify(CUSTOMER_ORDERS));
-  if (window.firebaseDb && window.dbRef && window.dbSet) {
-    window.dbSet(window.dbRef(window.firebaseDb, "mami_customer_orders"), CUSTOMER_ORDERS);
-  }
-}
+let uploadedBase64Files = [];
 
 const $ = id => document.getElementById(id);
 
@@ -344,26 +388,22 @@ function toast(title, text=""){
   clearTimeout(window.__toast); window.__toast=setTimeout(()=>el.classList.remove("show"),3200);
 }
 
-function deleteProduct(id, e) {
-  e.stopPropagation();
-  PRODUCTS = PRODUCTS.filter(p => p.id !== id);
-  saveProducts();
-  renderProducts();
-  toast("Silindi", "Tasarım kaldırıldı.");
+function saveProducts() {
+  localStorage.setItem("mami_products", JSON.stringify(PRODUCTS));
+  if (window.firebaseDb) window.dbSet(window.dbRef(window.firebaseDb, "mami_products"), PRODUCTS);
 }
 
-function deleteCustomerFolder(orderId) {
-  CUSTOMER_ORDERS = CUSTOMER_ORDERS.filter(o => o.id !== orderId);
-  saveCustomerOrders();
-  renderCustomerFolders();
-  toast("Silindi", "Müşteri klasörü ve fotoğrafları silindi.");
+function saveCustomerOrders() {
+  localStorage.setItem("mami_customer_orders", JSON.stringify(CUSTOMER_ORDERS));
+  if (window.firebaseDb) window.dbSet(window.dbRef(window.firebaseDb, "mami_customer_orders"), CUSTOMER_ORDERS);
 }
 
+/* UI Rendering */
 function renderProducts() {
   const grid = $("productsGrid");
   grid.innerHTML = "";
   if (!PRODUCTS || PRODUCTS.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">🎨 Henüz eklenmiş tasarım yok. Admin paneline giriş yapıp görsel ekleyebilirsiniz.</div>`;
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">🎨 Henüz ürün bulunmuyor. Logo butonundan Admin Paneline girip tasarım yükleyebilirsiniz.</div>`;
     return;
   }
   PRODUCTS.forEach(p => {
@@ -383,7 +423,7 @@ function renderProducts() {
     card.onclick = () => {
       selectedProduct = p;
       $("selectedProductTitle").value = p.title;
-      $("selectedProductPrice").value = p.price.toLocaleString("tr-TR") + " TL";
+      $("selectedProductPrice").value = Number(p.price).toLocaleString("tr-TR") + " TL";
       renderProducts();
     };
     grid.appendChild(card);
@@ -391,70 +431,103 @@ function renderProducts() {
 }
 window.renderProducts = renderProducts;
 
+function deleteProduct(id, e) {
+  e.stopPropagation();
+  PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+  saveProducts();
+  renderProducts();
+  toast("Silindi", "Tasarım kataloğdan kaldırıldı.");
+}
+
 function renderCustomerFolders() {
-  const listContainer = $("customerFoldersList");
-  listContainer.innerHTML = "";
+  const list = $("customerFoldersList");
+  list.innerHTML = "";
 
   if (!CUSTOMER_ORDERS || CUSTOMER_ORDERS.length === 0) {
-    listContainer.innerHTML = `<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">Henüz yüklenmiş müşteri araç fotoğrafı bulunmuyor.</p>`;
+    list.innerHTML = `<p style="color:var(--muted); font-size:13px; text-align:center; padding:30px;">Henüz gelen müşteri fotoğrafı yok.</p>`;
     return;
   }
 
   CUSTOMER_ORDERS.forEach(order => {
     const card = document.createElement("div");
-    card.className = "order-folder-card";
+    card.className = "folder-card";
 
-    let photosHTML = "";
-    if (order.photos && order.photos.length > 0) {
-      photosHTML = order.photos.map(p => `<img src="${p}" class="order-photo-item" onclick="window.open('${p}', '_blank')" title="Büyütmek için tıklayın">`).join("");
-    } else {
-      photosHTML = `<p style="font-size:11px; color:var(--text-muted);">Fotoğraf yüklenmedi.</p>`;
-    }
+    const photosHTML = (order.photos && order.photos.length) ?
+      order.photos.map(p => `<img src="${p}" class="folder-photo-thumb" onclick="openLightbox('${p}')">`).join("") :
+      `<p style="font-size:11px; color:var(--muted);">Görsel yok.</p>`;
 
     card.innerHTML = `
-      <div class="order-folder-header">
+      <div class="folder-header">
         <div>
-          <div class="order-folder-title">📁 ${order.custName} (${order.custPhone})</div>
-          <div style="font-size:11px; color:var(--text-muted);">Tarih: ${order.date} | Tasarım: <b>${order.productTitle}</b></div>
+          <div class="folder-title">📁 ${order.custName}</div>
+          <div class="folder-meta">📞 ${order.custPhone} | 🕒 ${order.date}</div>
+          <div class="folder-meta" style="color:var(--gold); font-weight:700; margin-top:2px;">Tasarım: ${order.productTitle}</div>
         </div>
-        <button onclick="deleteCustomerFolder('${order.id}')" style="color:var(--danger); font-weight:bold; font-size:12px;">Klasörü Sil</button>
+        <button onclick="deleteCustomerFolder('${order.id}')" style="color:var(--danger); font-size:12px; font-weight:700; background:none; border:none; cursor:pointer;">Klasörü Sil</button>
       </div>
-      <div style="font-size:12px; margin-bottom:8px;"><b>Özel Notlar:</b> ${order.notes || 'Yok'}</div>
-      <div style="font-size:12px; font-weight:bold; margin-bottom:4px; color:var(--gold-light);">Yüklenen Araç Fotoğrafları (${order.photos ? order.photos.length : 0} Adet):</div>
-      <div class="order-photo-grid">${photosHTML}</div>
+      <div style="font-size:12px; color:var(--text); margin-bottom:10px;"><b>Notlar:</b> ${order.notes || 'Not iletilmedi.'}</div>
+      <div style="font-size:11px; font-weight:800; color:var(--gold); margin-bottom:6px;">YÜKLENEN ARAÇ FOTOĞRAFLARI (${order.photos ? order.photos.length : 0})</div>
+      <div class="folder-photos-grid">${photosHTML}</div>
     `;
-
-    listContainer.appendChild(card);
+    list.appendChild(card);
   });
 }
 window.renderCustomerFolders = renderCustomerFolders;
 
-/* Sipariş Gönderimi & Fotoğrafların Admin Paneline Kaydedilmesi */
-$("orderBtn").onclick = async () => {
-  if (!selectedProduct) { toast("Tasarım Seçilmedi", "Lütfen bir tasarım seçin."); return; }
+function deleteCustomerFolder(id) {
+  CUSTOMER_ORDERS = CUSTOMER_ORDERS.filter(o => o.id !== id);
+  saveCustomerOrders();
+  renderCustomerFolders();
+  toast("Silindi", "Müşteri klasörü kaldırıldı.");
+}
+
+/* File Upload & Drag-Drop Handling */
+const fileInput = $("custVehiclePhotos");
+const dropZone = $("dropZone");
+
+['dragenter', 'dragover'].forEach(name => {
+  dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }, false);
+});
+['dragleave', 'drop'].forEach(name => {
+  dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }, false);
+});
+
+dropZone.addEventListener('drop', (e) => {
+  const dt = e.dataTransfer;
+  handleFiles(dt.files);
+});
+
+fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+async function handleFiles(files) {
+  uploadedBase64Files = [];
+  const previewGrid = $("previewGrid");
+  previewGrid.innerHTML = "";
+
+  for (const file of Array.from(files)) {
+    const b64 = await new Promise(res => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.readAsDataURL(file);
+    });
+    uploadedBase64Files.push(b64);
+
+    const img = document.createElement("img");
+    img.src = b64;
+    img.className = "upload-preview-item";
+    previewGrid.appendChild(img);
+  }
+}
+
+/* Order Submit */
+$("orderBtn").onclick = () => {
+  if (!selectedProduct) { toast("Tasarım Seçilmedi", "Lütfen kataloğdan bir tasarım seçin."); return; }
   const name = $("custName").value.trim();
   const phone = $("custPhone").value.trim();
   const notes = $("custNotes").value.trim();
-  const fileInput = $("custVehiclePhotos");
 
-  if (!name || !phone) { toast("Bilgiler Eksik", "Lütfen Ad Soyad ve Telefon numarası giriniz."); return; }
+  if (!name || !phone) { toast("Eksik Bilgi", "Lütfen Ad Soyad ve İletişim numaranızı yazın."); return; }
 
-  const files = Array.from(fileInput.files);
-  const photoBase64List = [];
-
-  if (files.length > 0) {
-    toast("Yükleniyor...", "Araç fotoğrafları admin paneline kaydediliyor...");
-    for (const file of files) {
-      const b64 = await new Promise((res) => {
-        const r = new FileReader();
-        r.onload = e => res(e.target.result);
-        r.readAsDataURL(file);
-      });
-      photoBase64List.push(b64);
-    }
-  }
-
-  // Sipariş verilerini ve Araç Görsellerini Klasör Olarak Kaydet
   const orderData = {
     id: "ord_" + Date.now(),
     custName: name,
@@ -462,35 +535,34 @@ $("orderBtn").onclick = async () => {
     productTitle: selectedProduct.title,
     productPrice: selectedProduct.price,
     notes: notes,
-    photos: photoBase64List,
+    photos: uploadedBase64Files,
     date: new Date().toLocaleString("tr-TR")
   };
 
   CUSTOMER_ORDERS.unshift(orderData);
   saveCustomerOrders();
 
-  // WhatsApp Bilgilendirmesi
   const msg = [
-    "🔥 *MAMI WORKS — YENİ TASARIM SİPARİŞİ*",
+    "🔥 *MAMI WORKS — YENİ SİPARİŞ TALEBİ*",
     "----------------------------------",
-    `🎨 *Seçilen Tasarım:* ${selectedProduct.title}`,
-    `💰 *Tasarım Tutarı:* ${selectedProduct.price.toLocaleString("tr-TR")} TL`,
+    `🎨 *Tasarım:* ${selectedProduct.title}`,
+    `💰 *Fiyat:* ${selectedProduct.price.toLocaleString("tr-TR")} TL`,
     "----------------------------------",
     "👤 *MÜŞTERİ BİLGİLERİ*",
     `• *Ad Soyad:* ${name}`,
     `• *Telefon:* ${phone}`,
     "----------------------------------",
-    "📷 *ARAÇ FOTOĞRAFLARI*",
-    photoBase64List.length > 0 ? `• ${photoBase64List.length} Adet araç fotoğrafı Admin Panelinize Yüklendi!` : "• Fotoğraf yüklenmedi.",
-    notes ? `• *Özel Notlar:* ${notes}` : "",
+    "📷 *FOTOĞRAFLAR*",
+    uploadedBase64Files.length > 0 ? `• ${uploadedBase64Files.length} Adet araç fotoğrafı web sitenizdeki klasöre yüklendi!` : "• Fotoğraf yüklenmedi.",
+    notes ? `• *Notlar:* ${notes}` : "",
     "----------------------------------",
-    "🚀 Sipariş detaylarımı onaylıyorum!"
+    "🚀 Tasarım sürecini başlatmak istiyorum."
   ].filter(Boolean).join("\n");
 
   window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`, "_blank");
 };
 
-/* Admin Paneli İşlemleri */
+/* Admin Controls */
 $("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
 $("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
 
@@ -499,71 +571,64 @@ $("adminLoginBtn").onclick = () => {
     $("adminLoginBox").style.display = "none";
     $("adminControlsBox").style.display = "block";
     document.body.classList.add("admin-mode");
-    renderProducts();
-    renderCustomerFolders();
-    toast("Admin Girişi", "Yönetici paneli aktif.");
-  } else {
-    toast("Hata", "Yanlış admin şifresi!");
-  }
+    renderProducts(); renderCustomerFolders();
+    toast("Başarılı", "Yönetici paneli açıldı.");
+  } else { toast("Hata", "Yanlış admin şifresi!"); }
 };
 
 $("tabAddProductBtn").onclick = () => {
-  $("tabAddProductBtn").classList.add("active");
-  $("tabCustomerFoldersBtn").classList.remove("active");
-  $("tabAddProductContent").style.display = "block";
-  $("tabCustomerFoldersContent").style.display = "none";
+  $("tabAddProductBtn").classList.add("active"); $("tabCustomerFoldersBtn").classList.remove("active");
+  $("tabAddProductContent").style.display = "block"; $("tabCustomerFoldersContent").style.display = "none";
 };
 
 $("tabCustomerFoldersBtn").onclick = () => {
-  $("tabCustomerFoldersBtn").classList.add("active");
-  $("tabAddProductBtn").classList.remove("active");
-  $("tabAddProductContent").style.display = "none";
-  $("tabCustomerFoldersContent").style.display = "block";
+  $("tabCustomerFoldersBtn").classList.add("active"); $("tabAddProductBtn").classList.remove("active");
+  $("tabAddProductContent").style.display = "none"; $("tabCustomerFoldersContent").style.display = "block";
   renderCustomerFolders();
 };
 
 $("saveProductBtn").onclick = () => {
   const title = $("newTitle").value.trim();
   const price = Number($("newPrice").value);
-  const fileInput = $("newImgFile");
+  const file = $("newImgFile").files[0];
 
-  if (!title || !price || !fileInput.files[0]) {
-    toast("Eksik Veri", "Lütfen tüm alanları doldurun ve bir görsel seçin.");
-    return;
-  }
+  if (!title || !price || !file) { toast("Eksik Bilgi", "Lütfen tüm ürün bilgilerini doldurun."); return; }
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
+  const r = new FileReader();
+  r.onload = e => {
     PRODUCTS.push({ id: "p_" + Date.now(), title, price, img: e.target.result });
-    saveProducts();
-    renderProducts();
+    saveProducts(); renderProducts();
     $("newTitle").value = ""; $("newPrice").value = ""; $("newImgFile").value = "";
-    toast("Başarılı", "Tasarım kataloğa eklendi.");
+    toast("Başarılı", "Yeni tasarım kataloğa eklendi.");
   };
-  reader.readAsDataURL(fileInput.files[0]);
+  r.readAsDataURL(file);
 };
 
 $("adminLogoutBtn").onclick = () => {
-  $("adminLoginBox").style.display = "block";
-  $("adminControlsBox").style.display = "none";
-  document.body.classList.remove("admin-mode");
-  renderProducts();
+  $("adminLoginBox").style.display = "block"; $("adminControlsBox").style.display = "none";
+  document.body.classList.remove("admin-mode"); renderProducts();
   $("adminModal").classList.remove("active");
 };
 
-/* Arka Plan Parçacık Efekti */
-const canvas = $("particleCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener("resize", resizeCanvas); resizeCanvas();
+/* Lightbox */
+function openLightbox(src) {
+  $("lightboxImg").src = src;
+  $("lightboxModal").classList.add("active");
+}
+window.openLightbox = openLightbox;
+$("lightboxModal").onclick = () => $("lightboxModal").classList.remove("active");
+
+/* Particles */
+const canvas = $("particleCanvas"); const ctx = canvas.getContext("2d"); let particles = [];
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener("resize", resize); resize();
 
 class Particle {
   constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
     this.size = Math.random() * 2 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3;
-    this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.5 + 0.2;
+    this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.4 + 0.1;
   }
   update() {
     this.x += this.speedX; this.y += this.speedY;
@@ -574,13 +639,13 @@ class Particle {
     ctx.fillStyle = `rgba(215, 180, 106, ${this.opacity})`; ctx.fill();
   }
 }
-function initParticles() { particles = []; for (let i = 0; i < 50; i++) particles.push(new Particle()); }
-function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
-initParticles(); animateParticles();
+for (let i = 0; i < 40; i++) particles.push(new Particle());
+(function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); })();
 
+/* Theme Toggle */
 $("themeBtn").onclick = () => {
-  document.body.classList.toggle("light-theme");
-  $("themeBtn").innerHTML = document.body.classList.contains("light-theme") ? "☀️ Açık Tema" : "🌙 Koyu Tema";
+  document.body.classList.toggle("light-mode");
+  $("themeBtn").innerHTML = document.body.classList.contains("light-mode") ? "☀️ Açık Mod" : "🌙 Koyu Mod";
 };
 
 renderProducts();
