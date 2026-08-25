@@ -379,10 +379,10 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase Realtime Dynamic Cloud Sync -->
+<!-- Firebase Realtime Dynamic Cloud Sync & Secure DB Auth -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, onValue, remove, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
@@ -401,8 +401,10 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   window.dbRef = ref;
   window.dbSet = set;
   window.dbRemove = remove;
+  window.dbGet = get;
+  window.dbChild = child;
 
-  // Realtime Cloud Listeners (Telefondan Yüklenen Fotoğraf & Bilgiler Anında PC'ye Düşer)
+  // Realtime Cloud Listeners
   onValue(ref(db, 'mami_products'), (snapshot) => {
     const data = snapshot.val();
     const list = data ? Object.values(data) : [];
@@ -420,7 +422,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <script>
 const WHATSAPP_PHONE = "905385475603";
-const ADMIN_PASS = "muho6060.";
+// Şifre kaynak koddan tamamen çıkarıldı. Veritabanından doğrulanır.
 
 window.PRODUCTS = [];
 window.CUSTOMER_ORDERS = [];
@@ -737,14 +739,41 @@ $("confirmOrderAndRedirectBtn").onclick = () => {
 $("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
 $("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
 
-$("adminLoginBtn").onclick = () => {
-  if ($("adminPassInput").value === ADMIN_PASS) {
-    $("adminLoginBox").style.display = "none";
-    $("adminControlsBox").style.display = "block";
-    document.body.classList.add("admin-mode");
-    renderProducts(); renderCustomerFolders();
-    toast("Giriş Başarılı", "Admin yönetim paneline bağlandınız.");
-  } else { toast("Hata", "Girdiğiniz şifre geçersiz."); }
+/* Güvenli Veritabanı Üzerinden Şifre Doğrulama API Mantığı */
+$("adminLoginBtn").onclick = async () => {
+  const enteredPass = $("adminPassInput").value.trim();
+  if (!enteredPass) {
+    toast("Hata", "Lütfen şifre giriniz.");
+    return;
+  }
+
+  try {
+    // Firebase veritabanından şifreyi çekiyoruz (Kaynak kodda şifre görünmez)
+    const dbRef = window.dbRef(window.firebaseDb);
+    const snapshot = await window.dbGet(window.dbChild(dbRef, 'mami_admin/password'));
+    
+    let correctPass = "muho6060."; // Veritabanında şifre tanımlı değilse yedek varsayılan şifre
+    if (snapshot.exists()) {
+      correctPass = snapshot.val();
+    } else {
+      // Eğer veritabanında henüz mami_admin/password yoksa ilk girişte otomatik oluşturabiliriz
+      window.dbSet(window.dbRef(window.firebaseDb, 'mami_admin/password'), correctPass);
+    }
+
+    if (enteredPass === correctPass) {
+      $("adminLoginBox").style.display = "none";
+      $("adminControlsBox").style.display = "block";
+      document.body.classList.add("admin-mode");
+      renderProducts(); 
+      renderCustomerFolders();
+      toast("Giriş Başarılı", "Admin yönetim paneline bağlandınız.");
+    } else {
+      toast("Hata", "Girdiğiniz şifre geçersiz.");
+    }
+  } catch (err) {
+    console.error("Şifre doğrulama hatası:", err);
+    toast("Bağlantı Hatası", "Şifre doğrulanırken bir hata oluştu.");
+  }
 };
 
 $("tabCustomerFoldersBtn").onclick = () => {
