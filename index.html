@@ -759,7 +759,7 @@ $("adminLoginBtn").onclick = async () => {
 
     const correctPass = snapshot.val();
 
-    if (enteredPass === correctPass) {
+    if (String(enteredPass).trim() === String(correctPass).trim()) {
       $("adminLoginBox").style.display = "none";
       $("adminControlsBox").style.display = "block";
       document.body.classList.add("admin-mode");
