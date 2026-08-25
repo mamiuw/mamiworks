@@ -46,7 +46,6 @@ body { min-height: 100vh; color: var(--text); background: var(--bg); padding: 24
 #particleCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 .app { max-width: 1280px; margin: 0 auto; position: relative; z-index: 2; }
 
-/* Header Nav */
 .nav {
   display: flex; justify-content: space-between; align-items: center; padding: 14px 24px;
   background: var(--panel); backdrop-filter: blur(20px); border: 1px solid var(--border);
@@ -69,14 +68,12 @@ body { min-height: 100vh; color: var(--text); background: var(--bg); padding: 24
   transition: all 0.3s var(--transition);
 }
 
-/* Layout Grid */
 .shop-grid { display: grid; grid-template-columns: 1fr 440px; gap: 24px; }
 .card { background: var(--panel); border: 1px solid var(--border); backdrop-filter: blur(20px); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
 .card-head { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
 .card-head h3 { font-size: 18px; font-weight: 700; }
 .card-head p { color: var(--muted); font-size: 12px; margin-top: 2px; }
 
-/* Product Catalog Grid */
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
 .product-card {
   background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px;
@@ -101,7 +98,6 @@ body { min-height: 100vh; color: var(--text); background: var(--bg); padding: 24
 }
 body.admin-mode .delete-btn { display: flex; }
 
-/* Forms */
 .field { display: flex; flex-direction: column; margin-bottom: 16px; }
 label { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
 input, textarea, select {
@@ -110,7 +106,6 @@ input, textarea, select {
 }
 input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
 
-/* Dropzone & Preview */
 .drop-zone {
   border: 2px dashed var(--border); border-radius: 12px; padding: 20px 14px; text-align: center;
   background: var(--input-bg); cursor: pointer; transition: all 0.3s var(--transition); position: relative;
@@ -138,7 +133,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 }
 .cta:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-/* Modals */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(16px);
   z-index: 999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.3s;
@@ -150,7 +144,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 }
 .modal-close { position: absolute; top: 20px; right: 20px; font-size: 20px; color: var(--muted); cursor: pointer; border: none; background: none; }
 
-/* IBAN Box Design */
 .iban-box {
   background: rgba(215, 180, 106, 0.05); border: 1px solid var(--border-active);
   border-radius: 14px; padding: 20px; margin: 16px 0; text-align: center;
@@ -165,7 +158,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 }
 .copy-btn:hover { filter: brightness(1.1); }
 
-/* Admin Panel Tabs & Filter */
 .admin-header-tools { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
 .admin-tabs { display: flex; gap: 8px; }
 .tab-btn {
@@ -177,7 +169,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 .search-box { flex: 1; max-width: 250px; }
 .search-box input { padding: 8px 12px; font-size: 12px; }
 
-/* Folder Cards */
 .folder-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; position: relative; }
 .folder-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 .folder-title { font-size: 16px; font-weight: 800; color: var(--gold); }
@@ -200,7 +191,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 .btn-sm:hover { border-color: var(--gold); color: var(--gold); }
 .btn-danger { color: var(--danger) !important; border-color: rgba(239, 68, 68, 0.3) !important; }
 
-/* Lightbox Modal */
 .lightbox-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex;
   flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.2s;
@@ -210,7 +200,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 .lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 8px; transition: transform 0.2s ease; }
 .lightbox-controls { display: flex; gap: 12px; margin-top: 16px; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 99px; }
 
-/* Toast Notification */
 .toast {
   position: fixed; bottom: 24px; right: 24px; z-index: 9999; background: var(--panel-solid);
   border: 1px solid var(--border-active); padding: 14px 20px; border-radius: 12px; box-shadow: var(--shadow);
@@ -390,7 +379,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
+<!-- Firebase Realtime Dynamic Cloud Sync -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -413,11 +402,10 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   window.dbSet = set;
   window.dbRemove = remove;
 
-  // Realtime Listeners
+  // Realtime Cloud Listeners (Telefondan Yüklenen Fotoğraf & Bilgiler Anında PC'ye Düşer)
   onValue(ref(db, 'mami_products'), (snapshot) => {
     const data = snapshot.val();
     const list = data ? Object.values(data) : [];
-    localStorage.setItem("mami_products", JSON.stringify(list));
     window.PRODUCTS = list;
     if (typeof window.renderProducts === "function") window.renderProducts();
   });
@@ -425,7 +413,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   onValue(ref(db, 'mami_customer_orders'), (snapshot) => {
     const data = snapshot.val();
     const list = data ? Object.values(data) : [];
-    localStorage.setItem("mami_customer_orders", JSON.stringify(list));
     window.CUSTOMER_ORDERS = list;
     if (typeof window.renderCustomerFolders === "function") window.renderCustomerFolders();
   });
@@ -435,13 +422,12 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 const WHATSAPP_PHONE = "905385475603";
 const ADMIN_PASS = "muho6060.";
 
-let PRODUCTS = JSON.parse(localStorage.getItem("mami_products") || "[]");
-let CUSTOMER_ORDERS = JSON.parse(localStorage.getItem("mami_customer_orders") || "[]");
+window.PRODUCTS = [];
+window.CUSTOMER_ORDERS = [];
 let selectedProduct = null;
 let uploadedBase64Files = [];
 let pendingOrderMessage = "";
 
-// Lightbox variables
 let currentZoom = 1;
 let currentRotation = 0;
 
@@ -453,16 +439,22 @@ function toast(title, text=""){
 }
 
 function saveProducts() {
-  localStorage.setItem("mami_products", JSON.stringify(PRODUCTS));
-  if (window.firebaseDb) window.dbSet(window.dbRef(window.firebaseDb, "mami_products"), PRODUCTS);
+  if (window.firebaseDb) {
+    const prodObj = {};
+    window.PRODUCTS.forEach(p => { prodObj[p.id] = p; });
+    window.dbSet(window.dbRef(window.firebaseDb, "mami_products"), prodObj);
+  }
 }
 
 function saveCustomerOrders() {
-  localStorage.setItem("mami_customer_orders", JSON.stringify(CUSTOMER_ORDERS));
-  if (window.firebaseDb) window.dbSet(window.dbRef(window.firebaseDb, "mami_customer_orders"), CUSTOMER_ORDERS);
+  if (window.firebaseDb) {
+    const ordersObj = {};
+    window.CUSTOMER_ORDERS.forEach(o => { ordersObj[o.id] = o; });
+    window.dbSet(window.dbRef(window.firebaseDb, "mami_customer_orders"), ordersObj);
+  }
 }
 
-/* Visual Compressor */
+/* Image Compression Engine */
 function compressImage(file, maxWidth = 800, quality = 0.65) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -494,11 +486,11 @@ function compressImage(file, maxWidth = 800, quality = 0.65) {
 function renderProducts() {
   const grid = $("productsGrid");
   grid.innerHTML = "";
-  if (!PRODUCTS || PRODUCTS.length === 0) {
+  if (!window.PRODUCTS || window.PRODUCTS.length === 0) {
     grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">🎨 Henüz katalogda tasarım yok. Sol üstteki M logosundan Admin paneline girip tasarım ekleyebilirsiniz.</div>`;
     return;
   }
-  PRODUCTS.forEach(p => {
+  window.PRODUCTS.forEach(p => {
     const card = document.createElement("div");
     card.className = "product-card" + (selectedProduct && selectedProduct.id === p.id ? " selected" : "");
     card.innerHTML = `
@@ -526,11 +518,12 @@ window.renderProducts = renderProducts;
 function deleteProduct(id, e) {
   e.stopPropagation();
   if(!confirm("Bu tasarımı katalogdan kaldırmak istediğinize emin misiniz?")) return;
-  PRODUCTS = PRODUCTS.filter(p => p.id !== id);
-  saveProducts();
+  window.PRODUCTS = window.PRODUCTS.filter(p => p.id !== id);
+  if(window.firebaseDb) window.dbRemove(window.dbRef(window.firebaseDb, `mami_products/${id}`));
   renderProducts();
   toast("Silindi", "Tasarım sistemden kaldırıldı.");
 }
+window.deleteProduct = deleteProduct;
 
 /* Admin Folders Render */
 function renderCustomerFolders() {
@@ -538,7 +531,7 @@ function renderCustomerFolders() {
   list.innerHTML = "";
 
   const query = $("adminSearchInput") ? $("adminSearchInput").value.toLowerCase().trim() : "";
-  const filteredOrders = CUSTOMER_ORDERS.filter(o => 
+  const filteredOrders = window.CUSTOMER_ORDERS.filter(o => 
     (o.custName && o.custName.toLowerCase().includes(query)) || 
     (o.custPhone && o.custPhone.includes(query))
   );
@@ -553,7 +546,7 @@ function renderCustomerFolders() {
     card.className = "folder-card";
 
     const photosHTML = (order.photos && order.photos.length) ?
-      order.photos.map((p, idx) => `<img src="${p}" class="folder-photo-thumb" onclick="openLightbox('${p}')" title="Büyütmek için tıklayın">`).join("") :
+      order.photos.map((p) => `<img src="${p}" class="folder-photo-thumb" onclick="openLightbox('${p}')" title="Büyütmek için tıklayın">`).join("") :
       `<p style="font-size:11px; color:var(--muted);">Görsel yok.</p>`;
 
     const status = order.status || "pending";
@@ -588,9 +581,9 @@ function renderCustomerFolders() {
 window.renderCustomerFolders = renderCustomerFolders;
 
 function updateOrderStatus(id, newStatus) {
-  const index = CUSTOMER_ORDERS.findIndex(o => o.id === id);
+  const index = window.CUSTOMER_ORDERS.findIndex(o => o.id === id);
   if (index !== -1) {
-    CUSTOMER_ORDERS[index].status = newStatus;
+    window.CUSTOMER_ORDERS[index].status = newStatus;
     saveCustomerOrders();
     toast("Durum Güncellendi", "Sipariş durumu başarıyla kaydedildi.");
   }
@@ -599,15 +592,15 @@ window.updateOrderStatus = updateOrderStatus;
 
 function deleteCustomerFolder(id) {
   if(!confirm("Bu müşteri klasörünü ve tüm görsellerini silmek istediğinize emin misiniz?")) return;
-  CUSTOMER_ORDERS = CUSTOMER_ORDERS.filter(o => o.id !== id);
-  saveCustomerOrders();
+  window.CUSTOMER_ORDERS = window.CUSTOMER_ORDERS.filter(o => o.id !== id);
+  if(window.firebaseDb) window.dbRemove(window.dbRef(window.firebaseDb, `mami_customer_orders/${id}`));
   renderCustomerFolders();
   toast("Klasör Silindi", "Müşteri kaydı kaldırıldı.");
 }
 window.deleteCustomerFolder = deleteCustomerFolder;
 
 function downloadAllPhotos(orderId) {
-  const order = CUSTOMER_ORDERS.find(o => o.id === orderId);
+  const order = window.CUSTOMER_ORDERS.find(o => o.id === orderId);
   if(!order || !order.photos || order.photos.length === 0) {
     toast("Fotoğraf Yok", "İndirilecek fotoğraf bulunamadı.");
     return;
@@ -625,7 +618,7 @@ function downloadAllPhotos(orderId) {
 }
 window.downloadAllPhotos = downloadAllPhotos;
 
-/* File Upload & Drag-Drop Handling */
+/* File Drag & Drop */
 const fileInput = $("custVehiclePhotos");
 const dropZone = $("dropZone");
 
@@ -678,7 +671,7 @@ function removeSelectedImg(index) {
 }
 window.removeSelectedImg = removeSelectedImg;
 
-/* Form & Modal Trigger */
+/* Order Button Click Event */
 $("orderBtn").onclick = () => {
   if (!selectedProduct) { toast("Tasarım Seçilmedi", "Lütfen önce kataloğdan bir tasarım seçin."); return; }
   const name = $("custName").value.trim();
@@ -704,7 +697,7 @@ $("orderBtn").onclick = () => {
     date: new Date().toLocaleString("tr-TR")
   };
 
-  CUSTOMER_ORDERS.unshift(orderData);
+  window.CUSTOMER_ORDERS.unshift(orderData);
   saveCustomerOrders();
 
   pendingOrderMessage = [
@@ -717,7 +710,7 @@ $("orderBtn").onclick = () => {
     `• *Ad Soyad:* ${name}`,
     `• *Telefon:* ${phone}`,
     "----------------------------------",
-    `📷 *Araç Fotoğrafları:* ${uploadedBase64Files.length} adet fotoğraf sisteme aktarıldı.`,
+    `📷 *Araç Fotoğrafları:* ${uploadedBase64Files.length} adet fotoğraf sisteme yüklendi.`,
     notes ? `• *Özel Not:* ${notes}` : "",
     "----------------------------------",
     "📄 *Ödeme Dekontunu Aşağıda Paylaşıyorum:* "
@@ -740,7 +733,7 @@ $("confirmOrderAndRedirectBtn").onclick = () => {
   window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(pendingOrderMessage)}`, "_blank");
 };
 
-/* Admin Panel Kontrolleri */
+/* Admin Modal Events */
 $("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
 $("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
 
@@ -777,7 +770,7 @@ $("saveProductBtn").onclick = async () => {
   if (!title || !price || !file) { toast("Eksik Alan", "Lütfen başlık, fiyat ve görsel alanlarını doldurun."); return; }
 
   const compressedImg = await compressImage(file, 800, 0.75);
-  PRODUCTS.push({ id: "p_" + Date.now(), title, price, img: compressedImg });
+  window.PRODUCTS.push({ id: "p_" + Date.now(), title, price, img: compressedImg });
   saveProducts(); renderProducts();
   $("newTitle").value = ""; $("newPrice").value = ""; $("newImgFile").value = "";
   toast("Eklendi", "Yeni tasarım kataloğa eklendi.");
@@ -789,7 +782,7 @@ $("adminLogoutBtn").onclick = () => {
   $("adminModal").classList.remove("active");
 };
 
-/* Interactive Lightbox Viewer */
+/* Lightbox Functions */
 function openLightbox(src) {
   currentZoom = 1; currentRotation = 0;
   const img = $("lightboxImg");
@@ -837,8 +830,6 @@ $("themeBtn").onclick = () => {
   document.body.classList.toggle("light-mode");
   $("themeBtn").innerHTML = document.body.classList.contains("light-mode") ? "☀️ Açık Mod" : "🌙 Koyu Mod";
 };
-
-renderProducts();
 </script>
 </body>
 </html>
