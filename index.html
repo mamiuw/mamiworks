@@ -150,6 +150,21 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 }
 .modal-close { position: absolute; top: 20px; right: 20px; font-size: 20px; color: var(--muted); cursor: pointer; border: none; background: none; }
 
+/* IBAN Box Design */
+.iban-box {
+  background: rgba(215, 180, 106, 0.05); border: 1px solid var(--border-active);
+  border-radius: 14px; padding: 20px; margin: 16px 0; text-align: center;
+}
+.iban-number {
+  font-family: monospace; font-size: 16px; font-weight: 800; color: var(--gold);
+  letter-spacing: 1px; margin: 10px 0; background: var(--input-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+}
+.copy-btn {
+  background: var(--gold-grad); color: #000; font-weight: 800; border: none;
+  padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-top: 6px; transition: 0.2s;
+}
+.copy-btn:hover { filter: brightness(1.1); }
+
 /* Admin Panel Tabs & Filter */
 .admin-header-tools { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
 .admin-tabs { display: flex; gap: 8px; }
@@ -250,7 +265,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
       <div class="field">
         <label>Adınız Soyadınız *</label>
-        <input type="text" id="custName" placeholder="Örn: Emin Yılmaz">
+        <input type="text" id="custName" placeholder="Örn: Ahmet Yılmaz">
       </div>
 
       <div class="field">
@@ -275,9 +290,33 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
         <textarea id="custNotes" rows="3" placeholder="Renk seçimi, sponsor logoları veya özel istekleriniz..."></textarea>
       </div>
 
-      <button class="cta" id="orderBtn">WhatsApp Sipariş Talebi Gönder →</button>
+      <button class="cta" id="orderBtn">Siparişi Tamamla & Ödeme Yap →</button>
     </aside>
   </main>
+</div>
+
+<!-- IBAN & Payment Modal -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal-card" style="max-width: 500px; text-align: center;">
+    <button class="modal-close" onclick="$('paymentModal').classList.remove('active')">✕</button>
+    <h3 style="font-size: 20px; font-weight:800; color:var(--gold); margin-bottom: 8px;">Ödeme Bilgileri</h3>
+    <p style="font-size: 13px; color: var(--muted);">Siparişinizin işleme alınması için aşağıdaki IBAN hesabına ödemeyi gerçekleştirip dekont iletmeniz gerekmektedir.</p>
+
+    <div class="iban-box">
+      <div style="font-size: 12px; color: var(--muted);">ALICI ADI SOYADI</div>
+      <div style="font-size: 15px; font-weight: 800; color: #fff; margin-top: 2px;">MUHAMMED EMİN YILMAZ</div>
+
+      <div style="font-size: 12px; color: var(--muted); margin-top: 12px;">IBAN NUMARASI</div>
+      <div class="iban-number" id="ibanText">TR00 0000 0000 0000 0000 0000 00</div>
+      <button class="copy-btn" id="copyIbanBtn">📋 IBAN'ı Kopyala</button>
+    </div>
+
+    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); padding: 12px; border-radius: 10px; font-size: 12px; color: var(--warning); margin-bottom: 20px; text-align: left; line-height: 1.5;">
+      ⚠️ <b>Lütfen Dikkat:</b> Ödemeyi yaptıktan sonra WhatsApp üzerinden <b>dekont iletmeniz gerekmektedir</b>. Siparişiniz dekont kontrolünden sonra tasarıma alınacaktır.
+    </div>
+
+    <button class="cta" id="confirmOrderAndRedirectBtn"> WhatsApp'a Yönlendir & Dekont Gönder →</button>
+  </div>
 </div>
 
 <!-- Admin Modal -->
@@ -317,7 +356,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
           <h4 style="font-size:14px; font-weight:800; margin-bottom:12px; color:var(--gold);">Yeni Tasarım Ekle</h4>
           <div class="field">
             <label>Tasarım Başlığı</label>
-            <input type="text" id="newTitle" placeholder="Örn: Porche Panamera Cyber Livery">
+            <input type="text" id="newTitle" placeholder="Örn: Porsche Panamera Cyber Livery">
           </div>
           <div class="field">
             <label>Fiyat (TL)</label>
@@ -400,6 +439,7 @@ let PRODUCTS = JSON.parse(localStorage.getItem("mami_products") || "[]");
 let CUSTOMER_ORDERS = JSON.parse(localStorage.getItem("mami_customer_orders") || "[]");
 let selectedProduct = null;
 let uploadedBase64Files = [];
+let pendingOrderMessage = "";
 
 // Lightbox variables
 let currentZoom = 1;
@@ -422,7 +462,7 @@ function saveCustomerOrders() {
   if (window.firebaseDb) window.dbSet(window.dbRef(window.firebaseDb, "mami_customer_orders"), CUSTOMER_ORDERS);
 }
 
-/* Otomatik Yüksek Hızlı Görsel Sıkıştırıcı (Firebase Senkronizasyon Hatalarını Engeller) */
+/* Visual Compressor */
 function compressImage(file, maxWidth = 800, quality = 0.65) {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -450,7 +490,7 @@ function compressImage(file, maxWidth = 800, quality = 0.65) {
   });
 }
 
-/* UI Rendering - Kataloğ */
+/* UI Rendering - Catalog */
 function renderProducts() {
   const grid = $("productsGrid");
   grid.innerHTML = "";
@@ -492,7 +532,7 @@ function deleteProduct(id, e) {
   toast("Silindi", "Tasarım sistemden kaldırıldı.");
 }
 
-/* Admin Panel Müşteri Klasörlerini Listeleme */
+/* Admin Folders Render */
 function renderCustomerFolders() {
   const list = $("customerFoldersList");
   list.innerHTML = "";
@@ -566,7 +606,6 @@ function deleteCustomerFolder(id) {
 }
 window.deleteCustomerFolder = deleteCustomerFolder;
 
-/* Fotoğrafları İndirme İşlemi */
 function downloadAllPhotos(orderId) {
   const order = CUSTOMER_ORDERS.find(o => o.id === orderId);
   if(!order || !order.photos || order.photos.length === 0) {
@@ -605,9 +644,7 @@ dropZone.addEventListener('drop', (e) => {
 fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
 async function handleFiles(files) {
-  const previewGrid = $("previewGrid");
   const fileList = Array.from(files);
-
   for (const file of fileList) {
     const compressedB64 = await compressImage(file, 800, 0.65);
     uploadedBase64Files.push(compressedB64);
@@ -641,7 +678,7 @@ function removeSelectedImg(index) {
 }
 window.removeSelectedImg = removeSelectedImg;
 
-/* Form Gönderme */
+/* Form & Modal Trigger */
 $("orderBtn").onclick = () => {
   if (!selectedProduct) { toast("Tasarım Seçilmedi", "Lütfen önce kataloğdan bir tasarım seçin."); return; }
   const name = $("custName").value.trim();
@@ -670,7 +707,7 @@ $("orderBtn").onclick = () => {
   CUSTOMER_ORDERS.unshift(orderData);
   saveCustomerOrders();
 
-  const msg = [
+  pendingOrderMessage = [
     "🔥 *MAMI WORKS — YENİ SİPARİŞ TALEBİ*",
     "----------------------------------",
     `🎨 *Tasarım:* ${selectedProduct.title}`,
@@ -680,13 +717,27 @@ $("orderBtn").onclick = () => {
     `• *Ad Soyad:* ${name}`,
     `• *Telefon:* ${phone}`,
     "----------------------------------",
-    `📷 *Araç Fotoğrafları:* ${uploadedBase64Files.length} adet fotoğraf Admin Paneline iletildi.`,
+    `📷 *Araç Fotoğrafları:* ${uploadedBase64Files.length} adet fotoğraf sisteme aktarıldı.`,
     notes ? `• *Özel Not:* ${notes}` : "",
     "----------------------------------",
-    "🚀 Tasarım sürecini detaylandırmak için iletişime geçebilirsiniz."
+    "📄 *Ödeme Dekontunu Aşağıda Paylaşıyorum:* "
   ].filter(Boolean).join("\n");
 
-  window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(msg)}`, "_blank");
+  $("paymentModal").classList.add("active");
+};
+
+/* IBAN Copy Action */
+$("copyIbanBtn").onclick = () => {
+  const iban = $("ibanText").innerText;
+  navigator.clipboard.writeText(iban).then(() => {
+    toast("Kopyalandı!", "IBAN adresi panoya kopyalandı.");
+  });
+};
+
+/* Confirm & Redirect to WhatsApp */
+$("confirmOrderAndRedirectBtn").onclick = () => {
+  $("paymentModal").classList.remove("active");
+  window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(pendingOrderMessage)}`, "_blank");
 };
 
 /* Admin Panel Kontrolleri */
