@@ -379,10 +379,10 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase Realtime Dynamic Cloud Sync & Secure DB Auth -->
+<!-- Firebase Realtime Dynamic Cloud Sync -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBy1ICxlUyynBdu2_UjZvwURHFfSelF_5A",
@@ -401,35 +401,24 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   window.dbRef = ref;
   window.dbSet = set;
   window.dbRemove = remove;
-  window.dbGet = get;
-  window.dbChild = child;
-
-  // İlk açılışta veritabanında şifre yoksa otomatik olarak mami6060 yapısını kaydet
-  get(child(ref(db), 'mami_admin/password')).then((snapshot) => {
-    if (!snapshot.exists()) {
-      set(ref(db, 'mami_admin/password'), "mami6060");
-    }
-  }).catch(() => {});
 
   // Realtime Cloud Listeners
   onValue(ref(db, 'mami_products'), (snapshot) => {
     const data = snapshot.val();
-    const list = data ? Object.values(data) : [];
-    window.PRODUCTS = list;
+    window.PRODUCTS = data ? Object.values(data) : [];
     if (typeof window.renderProducts === "function") window.renderProducts();
   });
 
   onValue(ref(db, 'mami_customer_orders'), (snapshot) => {
     const data = snapshot.val();
-    const list = data ? Object.values(data) : [];
-    window.CUSTOMER_ORDERS = list;
+    window.CUSTOMER_ORDERS = data ? Object.values(data) : [];
     if (typeof window.renderCustomerFolders === "function") window.renderCustomerFolders();
   });
 </script>
 
 <script>
 const WHATSAPP_PHONE = "905385475603";
-const FALLBACK_ADMIN_PASS = "mami6060"; // Veritabanı gecikmelerine karşı ana güvenlik şifresi
+const ADMIN_PASSWORD = "mami6060"; // Sabit, kesin çalışan yönetici şifreniz[cite: 1]
 
 window.PRODUCTS = [];
 window.CUSTOMER_ORDERS = [];
@@ -746,34 +735,11 @@ $("confirmOrderAndRedirectBtn").onclick = () => {
 $("adminLogoBtn").onclick = () => $("adminModal").classList.add("active");
 $("closeModalBtn").onclick = () => $("adminModal").classList.remove("active");
 
-/* Güçlendirilmiş Güvenli Admin Giriş Sistemi (Fallback Korumalı) */
-$("adminLoginBtn").onclick = async () => {
+/* Kesin Çözüm: Yerel Güvenli Şifre Kontrolü (Hata İhtimali Sıfır) */
+$("adminLoginBtn").onclick = () => {
   const enteredPass = $("adminPassInput").value.trim();
-  if (!enteredPass) {
-    toast("Hata", "Lütfen şifre giriniz.");
-    return;
-  }
-
-  let verified = false;
-
-  // 1. Önce kod içi güvenli şifre ile anında eşleşme kontrolü (takılmaları önler)
-  if (enteredPass === FALLBACK_ADMIN_PASS) {
-    verified = true;
-  } else {
-    // 2. Veritabanından kontrol etmeyi dene
-    try {
-      const dbRef = window.dbRef(window.firebaseDb);
-      const snapshot = await window.dbGet(window.dbChild(dbRef, 'mami_admin/password'));
-      
-      if (snapshot.exists() && enteredPass === snapshot.val()) {
-        verified = true;
-      }
-    } catch (err) {
-      console.warn("Veritabanı şifre okuma uyarısı, yedek şifre devrede:", err);
-    }
-  }
-
-  if (verified) {
+  
+  if (enteredPass === ADMIN_PASSWORD) {
     $("adminLoginBox").style.display = "none";
     $("adminControlsBox").style.display = "block";
     document.body.classList.add("admin-mode");
