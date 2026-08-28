@@ -85,18 +85,26 @@ body { min-height: 100vh; color: var(--text); background: var(--bg); padding: 24
 .product-img { width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid var(--border); }
 .product-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
 .product-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.product-price { font-size: 15px; font-weight: 800; color: var(--gold); margin-bottom: 12px; }
+.product-price-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.product-price { font-size: 15px; font-weight: 800; color: var(--gold); }
+.product-old-price { font-size: 12px; font-weight: 600; color: var(--danger); text-decoration: line-through; }
 .select-btn {
   width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--gold);
   background: rgba(215, 180, 106, 0.1); color: var(--gold); font-weight: 700; font-size: 12px; transition: 0.2s;
 }
 .product-card.selected .select-btn { background: var(--gold-grad); color: #000; border: none; }
 
-.delete-btn {
-  position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: #fff;
-  border-radius: 50%; width: 26px; height: 26px; display: none; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: none; cursor: pointer; z-index: 5;
+.admin-card-actions {
+  position: absolute; top: 8px; right: 8px; display: none; gap: 6px; z-index: 5;
 }
-body.admin-mode .delete-btn { display: flex; }
+body.admin-mode .admin-card-actions { display: flex; }
+.admin-action-btn {
+  background: rgba(0,0,0,0.8); color: #fff; border-radius: 50%; width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
+}
+.admin-action-btn:hover { background: var(--gold); color: #000; }
+.admin-action-btn.delete-btn { background: rgba(239, 68, 68, 0.9); border-color: transparent; }
+.admin-action-btn.delete-btn:hover { background: #dc2626; color: #fff; }
 
 .field { display: flex; flex-direction: column; margin-bottom: 16px; }
 label { font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
@@ -284,7 +292,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   </main>
 </div>
 
-<!-- IBAN & Payment Modal -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal-card" style="max-width: 500px; text-align: center;">
     <button class="modal-close" onclick="$('paymentModal').classList.remove('active')">✕</button>
@@ -308,7 +315,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   </div>
 </div>
 
-<!-- Admin Modal -->
 <div class="modal-overlay" id="adminModal">
   <div class="modal-card">
     <button class="modal-close" id="closeModalBtn">✕</button>
@@ -334,29 +340,40 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
         </div>
       </div>
 
-      <!-- Tab: Müşteri Klasörleri -->
       <div id="tabCustomerFoldersContent">
         <div id="customerFoldersList"></div>
       </div>
 
-      <!-- Tab: Ürün Yönetimi -->
       <div id="tabAddProductContent" style="display: none;">
         <div style="background:var(--input-bg); border:1px solid var(--border); padding:20px; border-radius:14px; margin-bottom:20px;">
-          <h4 style="font-size:14px; font-weight:800; margin-bottom:12px; color:var(--gold);">Yeni Tasarım Ekle</h4>
+          <h4 style="font-size:14px; font-weight:800; margin-bottom:12px; color:var(--gold);" id="productFormTitle">Yeni Tasarım Ekle</h4>
+          <input type="hidden" id="editProductId" value="">
           <div class="field">
             <label>Tasarım Başlığı</label>
             <input type="text" id="newTitle" placeholder="Örn: Porsche Panamera Cyber Livery">
           </div>
-          <div class="field">
-            <label>Fiyat (TL)</label>
-            <input type="number" id="newPrice" placeholder="Örn: 4500">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="field">
+              <label>Güncel / İndirimli Fiyat (TL)</label>
+              <input type="number" id="newPrice" placeholder="Örn: 4000">
+            </div>
+            <div class="field">
+              <label>Eski / Normal Fiyat (Opsiyonel - İndirim İçin)</label>
+              <input type="number" id="newOldPrice" placeholder="Örn: 5000">
+            </div>
           </div>
           <div class="field">
-            <label>Tasarım Görseli</label>
+            <label>Tasarım Görseli <span id="imgUpdateHint" style="font-weight:400; color:var(--muted)"></span></label>
             <input type="file" id="newImgFile" accept="image/*">
           </div>
-          <button class="cta" id="saveProductBtn">➕ Tasarımı Kataloğa Ekle</button>
+          <div style="display: flex; gap: 10px;">
+            <button class="cta" id="saveProductBtn">➕ Tasarımı Kataloğa Ekle</button>
+            <button class="cta" id="cancelEditBtn" style="display:none; background: rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--border); box-shadow:none;">İptal</button>
+          </div>
         </div>
+        
+        <h4 style="font-size:14px; font-weight:800; margin-bottom:12px; color:var(--text);">Katalogdaki Ürünler</h4>
+        <div id="adminProductList" style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto; padding-right:4px;"></div>
       </div>
 
       <button class="cta" id="adminLogoutBtn" style="margin-top:20px; background: rgba(239, 68, 68, 0.15); color:var(--danger); border:1px solid var(--danger); box-shadow:none;">Çıkış Yap</button>
@@ -364,7 +381,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
   </div>
 </div>
 
-<!-- Lightbox Modal -->
 <div class="lightbox-overlay" id="lightboxModal">
   <div class="lightbox-img-container">
     <img src="" class="lightbox-img" id="lightboxImg">
@@ -379,7 +395,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase Realtime Dynamic Cloud Sync -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -406,6 +421,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
     const data = snapshot.val();
     window.PRODUCTS = data ? Object.values(data) : [];
     if (typeof window.renderProducts === "function") window.renderProducts();
+    if (typeof window.renderAdminProductList === "function") window.renderAdminProductList();
   });
 
   onValue(ref(db, 'mami_customer_orders'), (snapshot) => {
@@ -417,8 +433,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 
 <script>
 const WHATSAPP_PHONE = "905385475603";
-// Şifre açık metin olarak görünmez; Base64/Salt mantığıyla gizlenmiştir (Ctrl+U yapsalar bile okunamaz)
-const ADMIN_PASS_HASH = "bWFtaTYwNjA="; // mami6060 şifresinin güvenli maskelenmiş halidir
+const ADMIN_PASS_HASH = "bWFtaTYwNjA="; // mami6060
 
 window.PRODUCTS = [];
 window.CUSTOMER_ORDERS = [];
@@ -490,13 +505,27 @@ function renderProducts() {
   window.PRODUCTS.forEach(p => {
     const card = document.createElement("div");
     card.className = "product-card" + (selectedProduct && selectedProduct.id === p.id ? " selected" : "");
+    
+    let priceHtml = `<div class="product-price">${Number(p.price).toLocaleString("tr-TR")} TL</div>`;
+    if (p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
+      priceHtml = `
+        <div class="product-price-wrap">
+          <span class="product-price">${Number(p.price).toLocaleString("tr-TR")} TL</span>
+          <span class="product-old-price">${Number(p.oldPrice).toLocaleString("tr-TR")} TL</span>
+        </div>
+      `;
+    }
+
     card.innerHTML = `
-      <button class="delete-btn" onclick="deleteProduct('${p.id}', event)">✕</button>
+      <div class="admin-card-actions">
+        <button class="admin-action-btn" onclick="startEditProduct('${p.id}', event)" title="Düzenle / İndirime Al">✏️</button>
+        <button class="admin-action-btn delete-btn" onclick="deleteProduct('${p.id}', event)" title="Sil">✕</button>
+      </div>
       <img src="${p.img}" class="product-img">
       <div class="product-body">
         <div>
           <div class="product-title">${p.title}</div>
-          <div class="product-price">${Number(p.price).toLocaleString("tr-TR")} TL</div>
+          ${priceHtml}
         </div>
         <button class="select-btn">${selectedProduct && selectedProduct.id === p.id ? "Seçildi ✓" : "Tasarımı Seç"}</button>
       </div>
@@ -512,12 +541,90 @@ function renderProducts() {
 }
 window.renderProducts = renderProducts;
 
+function renderAdminProductList() {
+  const list = $("adminProductList");
+  if (!list) return;
+  list.innerHTML = "";
+  if (!window.PRODUCTS || window.PRODUCTS.length === 0) {
+    list.innerHTML = `<p style="font-size:12px; color:var(--muted);">Katalogda ürün bulunmuyor.</p>`;
+    return;
+  }
+  window.PRODUCTS.forEach(p => {
+    const item = document.createElement("div");
+    item.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border); padding:10px 14px; border-radius:10px;";
+    
+    let priceInfo = `${Number(p.price).toLocaleString("tr-TR")} TL`;
+    if(p.oldPrice && Number(p.oldPrice) > Number(p.price)) {
+      priceInfo = `<span style="color:var(--gold);">${Number(p.price).toLocaleString("tr-TR")} TL</span> <span style="text-decoration:line-through; color:var(--danger); font-size:11px;">${Number(p.oldPrice).toLocaleString("tr-TR")} TL</span> (İndirimli)`;
+    }
+
+    item.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${p.img}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">
+        <div>
+          <div style="font-size:13px; font-weight:700;">${p.title}</div>
+          <div style="font-size:11px; color:var(--muted);">${priceInfo}</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-sm" onclick="startEditProduct('${p.id}')">Düzenle</button>
+        <button class="btn-sm btn-danger" onclick="deleteProduct('${p.id}', event)">Sil</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+window.renderAdminProductList = renderAdminProductList;
+
+function startEditProduct(id, e) {
+  if(e) e.stopPropagation();
+  const product = window.PRODUCTS.find(p => p.id === id);
+  if(!product) return;
+
+  $("editProductId").value = product.id;
+  $("newTitle").value = product.title;
+  $("newPrice").value = product.price;
+  $("newOldPrice").value = product.oldPrice || "";
+  $("productFormTitle").innerText = "Ürünü Düzenle / İndirim Uygula";
+  $("saveProductBtn").innerText = "💾 Güncellemeyi Kaydet";
+  $("cancelEditBtn").style.display = "block";
+  $("imgUpdateHint").innerText = "(Değiştirmek istemiyorsanız boş bırakın)";
+
+  $("tabAddProductBtn").click();
+}
+window.startEditProduct = startEditProduct;
+
+function resetProductForm() {
+  $("editProductId").value = "";
+  $("newTitle").value = "";
+  $("newPrice").value = "";
+  $("newOldPrice").value = "";
+  $("newImgFile").value = "";
+  $("productFormTitle").innerText = "Yeni Tasarım Ekle";
+  $("saveProductBtn").innerText = "➕ Tasarımı Kataloğa Ekle";
+  $("cancelEditBtn").style.display = "none";
+  $("imgUpdateHint").innerText = "";
+}
+
+const cancelEditBtn = $("cancelEditBtn");
+if(cancelEditBtn) {
+  cancelEditBtn.onclick = () => {
+    resetProductForm();
+  };
+}
+
 function deleteProduct(id, e) {
   e.stopPropagation();
   if(!confirm("Bu tasarımı katalogdan kaldırmak istediğinize emin misiniz?")) return;
   window.PRODUCTS = window.PRODUCTS.filter(p => p.id !== id);
+  if(selectedProduct && selectedProduct.id === id) {
+    selectedProduct = null;
+    $("selectedProductTitle").value = "Lütfen listeden seçim yapın";
+    $("selectedProductPrice").value = "0 TL";
+  }
   if(window.firebaseDb) window.dbRemove(window.dbRef(window.firebaseDb, `mami_products/${id}`));
   renderProducts();
+  renderAdminProductList();
   toast("Silindi", "Tasarım sistemden kaldırıldı.");
 }
 window.deleteProduct = deleteProduct;
@@ -750,7 +857,6 @@ const adminLoginBtn = $("adminLoginBtn");
 if(adminLoginBtn) {
   adminLoginBtn.onclick = () => {
     const enteredPass = $("adminPassInput").value.trim();
-    // Girilen şifre anında şifrelenip gizli hash ile karşılaştırılır
     try {
       if (btoa(enteredPass) === ADMIN_PASS_HASH) {
         $("adminLoginBox").style.display = "none";
@@ -758,6 +864,7 @@ if(adminLoginBtn) {
         document.body.classList.add("admin-mode");
         renderProducts(); 
         renderCustomerFolders();
+        renderAdminProductList();
         toast("Giriş Başarılı", "Admin yönetim paneline bağlandınız.");
       } else {
         toast("Hata", "Girdiğiniz şifre geçersiz.");
@@ -784,6 +891,7 @@ if(tabAddProductBtn) {
     $("tabAddProductBtn").classList.add("active"); $("tabCustomerFoldersBtn").classList.remove("active");
     $("tabAddProductContent").style.display = "block"; $("tabCustomerFoldersContent").style.display = "none";
     $("searchBoxContainer").style.display = "none";
+    renderAdminProductList();
   };
 }
 
@@ -793,17 +901,53 @@ if(adminSearchInput) adminSearchInput.oninput = () => renderCustomerFolders();
 const saveProductBtn = $("saveProductBtn");
 if(saveProductBtn) {
   saveProductBtn.onclick = async () => {
+    const editId = $("editProductId").value;
     const title = $("newTitle").value.trim();
     const price = Number($("newPrice").value);
+    const oldPriceInput = $("newOldPrice").value.trim();
+    const oldPrice = oldPriceInput ? Number(oldPriceInput) : null;
     const file = $("newImgFile").files[0];
 
-    if (!title || !price || !file) { toast("Eksik Alan", "Lütfen başlık, fiyat ve görsel alanlarını doldurun."); return; }
+    if (!title || !price) { toast("Eksik Alan", "Lütfen başlık ve fiyat alanlarını doldurun."); return; }
 
-    const compressedImg = await compressImage(file, 800, 0.75);
-    window.PRODUCTS.push({ id: "p_" + Date.now(), title, price, img: compressedImg });
-    saveProducts(); renderProducts();
-    $("newTitle").value = ""; $("newPrice").value = ""; $("newImgFile").value = "";
-    toast("Eklendi", "Yeni tasarım kataloğa eklendi.");
+    if (editId) {
+      // Düzenleme modu
+      const product = window.PRODUCTS.find(p => p.id === editId);
+      if (!product) return;
+
+      product.title = title;
+      product.price = price;
+      product.oldPrice = oldPrice && oldPrice > price ? oldPrice : null;
+
+      if (file) {
+        product.img = await compressImage(file, 800, 0.75);
+      }
+
+      saveProducts();
+      renderProducts();
+      renderAdminProductList();
+      resetProductForm();
+      toast("Güncellendi", "Ürün başarıyla güncellendi.");
+    } else {
+      // Yeni ürün ekleme modu
+      if (!file) { toast("Görsel Eksik", "Lütfen yeni tasarım için bir görsel seçin."); return; }
+
+      const compressedImg = await compressImage(file, 800, 0.75);
+      const newProduct = {
+        id: "p_" + Date.now(),
+        title,
+        price,
+        oldPrice: oldPrice && oldPrice > price ? oldPrice : null,
+        img: compressedImg
+      };
+
+      window.PRODUCTS.push(newProduct);
+      saveProducts();
+      renderProducts();
+      renderAdminProductList();
+      resetProductForm();
+      toast("Eklendi", "Yeni tasarım kataloğa eklendi.");
+    }
   };
 }
 
@@ -832,7 +976,6 @@ const zoomOutBtn = $("zoomOutBtn");
 if(zoomOutBtn) zoomOutBtn.onclick = () => { if(currentZoom > 0.4) currentZoom -= 0.2; updateLightboxTransform(); };
 
 const rotateBtn = $("rotateBtn");
-if(rotateBtn) rotateBtn.onchange = null;
 if(rotateBtn) rotateBtn.onclick = () => { currentRotation += 90; updateLightboxTransform(); };
 
 const closeLightboxBtn = $("closeLightboxBtn");
