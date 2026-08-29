@@ -82,7 +82,7 @@ body { min-height: 100vh; color: var(--text); background: var(--bg); padding: 24
 }
 .product-card:hover { transform: translateY(-4px); border-color: var(--border-active); box-shadow: 0 12px 30px var(--gold-glow); }
 .product-card.selected { border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow); background: rgba(215, 180, 106, 0.05); }
-.product-img { width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid var(--border); }
+.product-img, .product-video { width: 100%; height: 150px; object-fit: cover; border-bottom: 1px solid var(--border); }
 .product-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
 .product-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
 .product-price-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -127,7 +127,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
 .upload-preview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
 .preview-wrapper { position: relative; width: 100%; height: 70px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-active); }
 .upload-preview-item { width: 100%; height: 100%; object-fit: cover; }
-.remove-img-btn { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.remove-img-btn { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
 
 .badge-count {
   display: inline-block; padding: 4px 10px; border-radius: 99px; background: rgba(215, 180, 106, 0.15);
@@ -363,8 +363,8 @@ input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shado
             </div>
           </div>
           <div class="field">
-            <label>Tasarım Görseli <span id="imgUpdateHint" style="font-weight:400; color:var(--muted)"></span></label>
-            <input type="file" id="newImgFile" accept="image/*">
+            <label>Tasarım Görseli veya Videosu <span id="imgUpdateHint" style="font-weight:400; color:var(--muted)">(Fotoğraf veya Video seçebilirsiniz)</span></label>
+            <input type="file" id="newImgFile" accept="image/*,video/*">
           </div>
           <div style="display: flex; gap: 10px;">
             <button class="cta" id="saveProductBtn">➕ Tasarımı Kataloğa Ekle</button>
@@ -494,6 +494,19 @@ function compressImage(file, maxWidth = 800, quality = 0.65) {
   });
 }
 
+// Genel dosya okuyucu (Fotoğraf için sıkıştırma, video için doğrudan Base64)
+function readFileAsBase64(file) {
+  return new Promise((resolve) => {
+    if (file.type.startsWith('video/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    } else {
+      compressImage(file, 800, 0.75).then(resolve);
+    }
+  });
+}
+
 function renderProducts() {
   const grid = $("productsGrid");
   if (!grid) return;
@@ -516,12 +529,17 @@ function renderProducts() {
       `;
     }
 
+    const isVideo = p.img && (p.img.startsWith('data:video/') || p.img.includes('.mp4') || p.img.includes('video'));
+    const mediaHtml = isVideo 
+      ? `<video src="${p.img}" class="product-video" muted autoplay loop></video>`
+      : `<img src="${p.img}" class="product-img">`;
+
     card.innerHTML = `
       <div class="admin-card-actions">
         <button class="admin-action-btn" onclick="startEditProduct('${p.id}', event)" title="Düzenle / İndirime Al">✏️</button>
         <button class="admin-action-btn delete-btn" onclick="deleteProduct('${p.id}', event)" title="Sil">✕</button>
       </div>
-      <img src="${p.img}" class="product-img">
+      ${mediaHtml}
       <div class="product-body">
         <div>
           <div class="product-title">${p.title}</div>
@@ -558,9 +576,14 @@ function renderAdminProductList() {
       priceInfo = `<span style="color:var(--gold);">${Number(p.price).toLocaleString("tr-TR")} TL</span> <span style="text-decoration:line-through; color:var(--danger); font-size:11px;">${Number(p.oldPrice).toLocaleString("tr-TR")} TL</span> (İndirimli)`;
     }
 
+    const isVideo = p.img && (p.img.startsWith('data:video/') || p.img.includes('video'));
+    const thumbHtml = isVideo 
+      ? `<video src="${p.img}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;"></video>`
+      : `<img src="${p.img}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">`;
+
     item.innerHTML = `
       <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${p.img}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">
+        ${thumbHtml}
         <div>
           <div style="font-size:13px; font-weight:700;">${p.title}</div>
           <div style="font-size:11px; color:var(--muted);">${priceInfo}</div>
@@ -603,7 +626,7 @@ function resetProductForm() {
   $("productFormTitle").innerText = "Yeni Tasarım Ekle";
   $("saveProductBtn").innerText = "➕ Tasarımı Kataloğa Ekle";
   $("cancelEditBtn").style.display = "none";
-  $("imgUpdateHint").innerText = "";
+  $("imgUpdateHint").innerText = "(Fotoğraf veya Video seçebilirsiniz)";
 }
 
 const cancelEditBtn = $("cancelEditBtn");
@@ -920,7 +943,7 @@ if(saveProductBtn) {
       product.oldPrice = oldPrice && oldPrice > price ? oldPrice : null;
 
       if (file) {
-        product.img = await compressImage(file, 800, 0.75);
+        product.img = await readFileAsBase64(file);
       }
 
       saveProducts();
@@ -930,15 +953,15 @@ if(saveProductBtn) {
       toast("Güncellendi", "Ürün başarıyla güncellendi.");
     } else {
       // Yeni ürün ekleme modu
-      if (!file) { toast("Görsel Eksik", "Lütfen yeni tasarım için bir görsel seçin."); return; }
+      if (!file) { toast("Medya Eksik", "Lütfen yeni tasarım için bir görsel veya video seçin."); return; }
 
-      const compressedImg = await compressImage(file, 800, 0.75);
+      const mediaBase64 = await readFileAsBase64(file);
       const newProduct = {
         id: "p_" + Date.now(),
         title,
         price,
         oldPrice: oldPrice && oldPrice > price ? oldPrice : null,
-        img: compressedImg
+        img: mediaBase64
       };
 
       window.PRODUCTS.push(newProduct);
